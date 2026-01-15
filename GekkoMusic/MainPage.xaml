@@ -1,0 +1,717 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="GekkoMusic.MainPage"
+             xmlns:vm="clr-namespace:GekkoMusic.ViewModels"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+
+             BackgroundColor="#000">
+
+    <Grid RowDefinitions="9.3*,*"
+          ColumnDefinitions="200,*"
+          Padding="0"
+          Margin="1">
+
+        <!-- LEFT SIDEBAR -->
+        <Grid Grid.Row="0"
+              Grid.Column="0"
+              BackgroundColor="#000"
+              Padding="16">
+
+            <VerticalStackLayout>
+                <Label Text="Recently Played"
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       TextColor="White" />
+            </VerticalStackLayout>
+
+        </Grid>
+
+        <!--  cONTENT AREA -->
+        <Grid Margin="10"
+              x:Name="ContentPage"
+              Grid.Row="0"
+              Grid.Column="1"
+              ColumnDefinitions="8.5*,3*"
+              BackgroundColor="#121212"
+              ColumnSpacing="0">
+                
+            
+            
+            
+             <!-- MAIN CONTENT -->
+            <Frame BackgroundColor="#181818" Padding="24">
+                <Frame.Background>
+                    <LinearGradientBrush EndPoint="0,1">
+                        <GradientStop Color="BlueViolet" Offset="0"/>
+                        <GradientStop Color="#111111" Offset="0.2"/>
+                    </LinearGradientBrush>
+                </Frame.Background>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    
+                    <!--scrollling here horizonatl only for above row 0th -->
+                    <ScrollView
+                        Grid.Row="0"
+                        Orientation="Horizontal"
+                        
+                        VerticalScrollBarVisibility="Never"
+                        HorizontalScrollBarVisibility="Default">
+
+                        <!-- CONTENT CONTAINER -->
+                        <Grid
+                            HeightRequest="80"
+                            Margin="0,0,0,20"
+                            HorizontalOptions="Start"
+                            >
+
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- LIKED SONGS -->
+                            <Border 
+                                x:Name="LikedSongFrame"
+                                Grid.Column="0" 
+                                Margin="10" 
+                                HeightRequest="60" 
+                                WidthRequest="250" 
+                                BackgroundColor="#181818"
+                                
+                                >
+
+                                <Border.GestureRecognizers>
+                                    <PointerGestureRecognizer 
+                                        PointerEntered="OnPointerEntered"
+                                        PointerExited="OnPointerExited"
+                                        />
+                                </Border.GestureRecognizers>
+
+
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="10"/>
+                                </Border.StrokeShape>
+
+                                <Grid ColumnDefinitions="3*,7*">
+                                    <Border Grid.Column="0">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="10,0,10,0"/>
+                                        </Border.StrokeShape>
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                <GradientStop Color="BlueViolet" Offset="0"/>
+                                                <GradientStop Color="White" Offset="0.9"/>
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                        <Image Source="heart.png" WidthRequest="30" HeightRequest="30"
+                                                HorizontalOptions="Center" VerticalOptions="Center"/>
+                                    </Border>
+
+                                    <Grid Grid.Column="1" Padding="12">
+                                        <Label Text="LIKED SONGS" FontAttributes="Bold"
+                                           FontSize="14" TextColor="White"
+                                           VerticalOptions="Center"
+                                               >
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer Tapped="OnLabelTapped" />
+                                            </Label.GestureRecognizers>
+                                            
+                                        </Label>
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                            
+
+                            <!-- DEV RECOMMENDATION -->
+                            <Border 
+                                x:Name="DecPickFrame"
+                                Grid.Column="1" 
+                                Margin="10" 
+                                HeightRequest="60" 
+                                WidthRequest="250" 
+                                BackgroundColor="#181818">
+
+                                <Border.GestureRecognizers>
+                                    <PointerGestureRecognizer 
+                                    PointerEntered="OnPointerEntered"
+                                    PointerExited="OnPointerExited"
+                                />
+                                    
+                                </Border.GestureRecognizers>
+
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="10"/>
+                                </Border.StrokeShape>
+
+                                <Grid ColumnDefinitions="3*,7*">
+                                    <Border Grid.Column="0">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="10,0,10,0"/>
+                                        </Border.StrokeShape>
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                <GradientStop Color="GreenYellow" Offset="0"/>
+                                                <GradientStop Color="White" Offset="0.9"/>
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                        <Image Source="playlist.png" WidthRequest="30" HeightRequest="30"
+                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                                    </Border>
+
+                                    <Grid Grid.Column="1" Padding="12">
+                                        <Label Text="DEV PICKS"
+                                           FontAttributes="Bold"
+                                           FontSize="14"
+                                           TextColor="White"
+                                           VerticalOptions="Center"/>
+                                    </Grid>
+                                </Grid>
+                            </Border>
+
+                            <!--extra pads-->
+
+                            <Border 
+                                x:Name="RecentplayFrame"
+                                Grid.Column="2" 
+                                Margin="10" 
+                                HeightRequest="60" 
+                                WidthRequest="250" 
+                                BackgroundColor="#181818">
+
+
+                                <Border.GestureRecognizers>
+                                    <PointerGestureRecognizer 
+                                        PointerEntered="OnPointerEntered"
+                                        PointerExited="OnPointerExited"
+                                        />
+
+
+                                </Border.GestureRecognizers>
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="10"/>
+                                </Border.StrokeShape>
+
+                                <Grid ColumnDefinitions="3*,7*">
+                                    <Border Grid.Column="0">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="10,0,10,0"/>
+                                        </Border.StrokeShape>
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                <GradientStop Color="LightGoldenrodYellow" Offset="0"/>
+                                                <GradientStop Color="white" Offset="0.9"/>
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                        <Image Source="history.png" WidthRequest="30" HeightRequest="30"
+                                            HorizontalOptions="Center" VerticalOptions="Center"/>
+                                    </Border>
+
+                                    <Grid Grid.Column="1" Padding="12">
+                                        <Label Text="RECENTLY PLAYED"
+                                            FontAttributes="Bold"
+                                            FontSize="14"
+                                            TextColor="White"
+                                            VerticalOptions="Center"/>
+                                    </Grid>
+                                </Grid>
+                            </Border>
+
+                            <Border 
+                                x:Name="DownloadFrame"
+                                Grid.Column="3" 
+                                Margin="10" 
+                                HeightRequest="60" 
+                                WidthRequest="250" 
+                                BackgroundColor="#181818">
+
+                                <Border.GestureRecognizers>
+                                    <PointerGestureRecognizer 
+                                        PointerEntered="OnPointerEntered"
+                                        PointerExited="OnPointerExited"
+                                        />
+                                    
+                                    
+                                </Border.GestureRecognizers>
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="10"/>
+                                </Border.StrokeShape>
+
+                                <Grid ColumnDefinitions="3*,7*">
+                                    <Border Grid.Column="0">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="10,0,10,0"/>
+                                        </Border.StrokeShape>
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                <GradientStop Color="LightCoral" Offset="0"/>
+                                                <GradientStop Color="White" Offset="0.9"/>
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                        <Image Source="download.png" WidthRequest="30" HeightRequest="30"
+                                            HorizontalOptions="Center" VerticalOptions="Center"/>
+                                    </Border>
+
+                                    <Grid Grid.Column="1" Padding="12">
+                                        <Label Text="Downloaded/ Offline"
+                                        FontAttributes="Bold"
+                                        FontSize="14"
+                                        TextColor="White"
+                                        VerticalOptions="Center"/>
+                                    </Grid>
+                                </Grid>
+                            </Border>
+
+                            <Border 
+                                x:Name="GenreFrame"
+                                Grid.Column="4" 
+                                Margin="10" 
+                                HeightRequest="60" 
+                                WidthRequest="250" 
+                                BackgroundColor="#181818">
+
+                                <Border.GestureRecognizers>
+                                    <PointerGestureRecognizer 
+                                        PointerEntered="OnPointerEntered"
+                                        PointerExited="OnPointerExited"
+                                        />
+                                    
+                                </Border.GestureRecognizers>
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="10"/>
+                                </Border.StrokeShape>
+
+                                <Grid ColumnDefinitions="3*,7*">
+                                    <Border Grid.Column="0">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="10,0,10,0"/>
+                                        </Border.StrokeShape>
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                <GradientStop Color="LightSeaGreen" Offset="0"/>
+                                                <GradientStop Color="White" Offset="0.9"/>
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+                                        <Image Source="musical.png" WidthRequest="30" HeightRequest="30"
+                                                HorizontalOptions="Center" VerticalOptions="Center"/>
+                                    </Border>
+
+                                    <Grid Grid.Column="1" Padding="12">
+                                        <Label Text="GENRE"
+                                            FontAttributes="Bold"
+                                            FontSize="14"
+                                            TextColor="White"
+                                            VerticalOptions="Center"/>
+                                    </Grid>
+                                </Grid>
+                            </Border>
+
+
+
+
+
+
+
+
+                        </Grid>
+                    </ScrollView>
+
+
+
+                    <!-- Horizontal Playlist Section -->
+                    <StackLayout Grid.Row="1" Margin="0,0,0,30">
+                        <Label Text="Your Playlists"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   TextColor="White"
+                   Margin="0,0,0,10"/>
+
+                        <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+                            <StackLayout Orientation="Horizontal" Spacing="15">
+
+                                <!-- Add New Playlist Button -->
+                                <Frame CornerRadius="15" 
+                           BackgroundColor="#333333"
+                           Padding="20"
+                           WidthRequest="160"
+                           HeightRequest="200">
+                                    <StackLayout Spacing="15" VerticalOptions="Center">
+                                        <!-- Plus Icon -->
+                                        <Frame BackgroundColor="#444444"
+                                   CornerRadius="50"
+                                   HeightRequest="60"
+                                   WidthRequest="60"
+                                   HorizontalOptions="Center"
+                                   Padding="0">
+                                            <Label Text="+"
+                                       FontSize="30"
+                                       TextColor="White"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"/>
+                                        </Frame>
+
+                                        <Label Text="Create Playlist"
+                                   FontSize="16"
+                                   FontAttributes="Bold"
+                                   TextColor="White"
+                                   HorizontalOptions="Center"/>
+                                    </StackLayout>
+
+                             <!--       <Frame.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="OnCreatePlaylistTapped"/>
+                                    </Frame.GestureRecognizers>-->
+                                </Frame>
+
+                            </StackLayout>
+                            
+                        </ScrollView>
+                        <Border>
+                            <SearchBar
+                            Grid.Row="1"
+                            WidthRequest="200"
+                            HeightRequest="40"
+                            Placeholder="Search"
+                            Text="{Binding SearchText}"
+                            SearchCommand="{Binding SearchCommand}"
+                            SearchCommandParameter="{Binding SearchText}" />
+
+                            
+                        </Border>
+                    </StackLayout>
+
+                    <!-- Main Content Area -->
+                    
+                </Grid>
+            </Frame>
+
+            <!-- side panel (songpanel) -->
+            <Grid Grid.Column="1"
+                  BackgroundColor="#202020"
+                  Padding="0">
+
+                <Border>
+                    <!-- NO Background gradient here -->
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="6*"/>
+                            <RowDefinition Height="4*"/>
+                        </Grid.RowDefinitions>
+
+                        <WebView Grid.RowSpan="2">
+                            <WebView.Source>
+                                <HtmlWebViewSource>
+                                    <HtmlWebViewSource.Html>
+                                        <![CDATA[
+                                            <!DOCTYPE html>
+                                            <html>
+                                            <head>
+                                            <meta name="viewport"
+                                                  content="width=device-width,
+                                                           height=device-height,
+                                                           initial-scale=1.0,
+                                                           maximum-scale=1.0,
+                                                           user-scalable=no">
+
+                                            <style>
+                                            html, body {
+                                                margin: 0;
+                                                padding: 0;
+                                                width: 100%;
+                                                height: 100%;
+                                                overflow: hidden;
+                                                background: black;
+                                            }
+
+                                            /* VIDEO */
+                                            video {
+                                                position: fixed;
+                                                inset: 0;
+                                                width: 100%;
+                                                height: 100%;
+                                                object-fit: cover;
+                                                pointer-events: none;
+                                            }
+
+                                            /* GRADIENT OVERLAY */
+                                            .overlay {
+                                                position: fixed;
+                                                inset: 0;
+                                                pointer-events: none;
+                                                background: linear-gradient(
+                                                    to top,
+                                                    rgba(0,0,0,1) 0%,     /* bottom: FULL DARK */
+                                                    rgba(0,0,0,1) 20%,    /* keep dark until 40% */
+                                                    rgba(0,0,0,0.2) 80%,  /* start fading */
+                                                    rgba(32,178,170,0.0) 100% /* fully light/transparent at top */
+                                                );
+                                            }
+                                            </style>
+                                            </head>
+
+                                            <body>
+                                                <video autoplay muted playsinline loop>
+                                                    <source src="hopecore.mp4" type="video/mp4">
+                                                </video>
+
+                                                <!-- THIS IS THE GRADIENT -->
+                                                <div class="overlay"></div>
+                                            </body>
+                                            </html>
+                                        ]]>
+                                    </HtmlWebViewSource.Html>
+                                </HtmlWebViewSource>
+                            </WebView.Source>
+                        </WebView>
+
+                        <Border Grid.Row="1" Margin="20" BackgroundColor="#181818">
+                            
+                        </Border>
+                        
+
+                    </Grid>
+                </Border>
+
+
+
+
+
+
+
+
+            </Grid>
+
+
+
+        </Grid>
+
+        <!-- BOTTOM PLAYER -->
+        <!-- BOTTOM PLAYER -->
+        <Grid
+    Grid.Row="1"
+    Grid.ColumnSpan="2"
+    BackgroundColor="#000000"
+    Padding="12"
+    RowDefinitions="Auto,Auto"
+    ColumnDefinitions="2*,10*,2*">
+
+            <!-- LEFT: Album + Track Info -->
+            <HorizontalStackLayout
+        Grid.Column="0"
+        Spacing="12"
+        VerticalOptions="Center">
+
+                <Image
+            Source="{Binding AlbumArt}"
+            WidthRequest="56"
+            HeightRequest="56"
+            Aspect="AspectFill" />
+
+                <VerticalStackLayout>
+                    <Label
+                Text="{Binding TrackTitle}"
+                TextColor="White"
+                FontSize="14"
+                FontAttributes="Bold" />
+
+                    <Label
+                Text="{Binding ArtistName}"
+                TextColor="#B3B3B3"
+                FontSize="12" />
+                </VerticalStackLayout>
+            </HorizontalStackLayout>
+
+            <!-- CENTER: CONTROLS + SEEK -->
+            <Grid
+                Grid.Column="1"
+                RowDefinitions="Auto,Auto"
+                HorizontalOptions="Center">
+
+                <!-- Transport Controls -->
+                <HorizontalStackLayout
+                    Spacing="18"
+                    HorizontalOptions="Center">
+
+                    <ImageButton
+                        HeightRequest="7"
+                        WidthRequest="7"
+                        CornerRadius="15"
+                        Source="shuffle.png"
+                        BackgroundColor="#171717"
+                        Command="{Binding ShuffleCommand}" >
+
+                        <ImageButton.GestureRecognizers>
+                                    <PointerGestureRecognizer
+                                        PointerEntered ="OnPointerEnteredicon"
+                                        PointerExited ="OnPointerExitedicon" />
+
+                                </ImageButton.GestureRecognizers>
+                    </ImageButton>
+
+
+                    <ImageButton
+                        BackgroundColor="#171717"
+                        HeightRequest="8"
+                        CornerRadius="12"
+                        Source="back_player.png"
+
+                        Command="{Binding PreviousCommand}" >
+                            <ImageButton.GestureRecognizers>
+                                <PointerGestureRecognizer
+                                            PointerEntered ="OnPointerEnteredicon"
+                                            PointerExited ="OnPointerExitedicon" />
+
+                            </ImageButton.GestureRecognizers>
+
+                    </ImageButton>
+
+                    <ImageButton
+                        HorizontalOptions="Center"
+                        Source="{Binding PlayPauseIcon}"
+                        Command="{Binding PlayPauseCommand}"
+                        WidthRequest="40"
+                        HeightRequest="40"
+                        BackgroundColor="White"
+
+                        CornerRadius="20" >
+                            <ImageButton.GestureRecognizers>
+                                <PointerGestureRecognizer
+                                            PointerEntered ="OnPointerEnteredicon"
+                                            PointerExited ="OnPointerExitedicon" />
+
+                            </ImageButton.GestureRecognizers>
+                    </ImageButton>
+
+                    <ImageButton
+                        BackgroundColor="#171717"
+                        HeightRequest="8"   
+                        Source="next.png"
+                        CornerRadius="12"
+
+                        Command="{Binding NextCommand}" >
+                        <ImageButton.GestureRecognizers>
+                            <PointerGestureRecognizer
+                                        PointerEntered ="OnPointerEnteredicon"
+                                        PointerExited ="OnPointerExitedicon" />
+
+                        </ImageButton.GestureRecognizers>
+                    </ImageButton>
+
+                    <ImageButton
+                        BackgroundColor="#171717"
+                        CornerRadius="15"
+                        HeightRequest="5"
+                        WidthRequest="5"
+                        VerticalOptions="Center"
+                        HorizontalOptions="Center"
+                        Source="repeat.png"
+                        Command="{Binding RepeatCommand}" >
+                        
+                            <ImageButton.GestureRecognizers>
+                                <PointerGestureRecognizer
+                                            PointerEntered ="OnPointerEnteredicon"
+                                            PointerExited ="OnPointerExitedicon" />
+
+                            </ImageButton.GestureRecognizers>
+                    </ImageButton>
+
+                    <!--total time fo the song -->
+                   
+
+                </HorizontalStackLayout>
+
+                <!-- Seek Bar -->
+                <HorizontalStackLayout
+                    Grid.Row="1">
+                    
+                
+
+                <!--ON GOIN TIME OF THE SONG RN-->
+                <Label
+                        Text="{Binding CurrentTime}"
+                        FontSize="11"
+                        TextColor="#B3B3B3"
+                        VerticalOptions="Center"
+                    Padding="15"
+                    />
+                <Slider
+                    HorizontalOptions="Center"
+                    WidthRequest="350"
+                    Grid.Row="1"
+                    Margin="0,8,0,0"
+                    Minimum="0"
+                    Maximum="{Binding TotalDuration}"
+                    Value="{Binding Position, Mode=TwoWay}"
+                    DragStartedCommand="{Binding SeekStartedCommand}"
+                    DragCompletedCommand="{Binding SeekCompletedCommand}"
+                    ThumbColor="White"
+                    MinimumTrackColor="LightBlue"
+                    MaximumTrackColor="#171717" />
+                    
+                <Label
+                          Grid.Column="2"
+                          Text="{Binding TotalTime}"
+                          FontSize="11"
+                          TextColor="#B3B3B3"
+                          VerticalOptions="Center"
+                          Padding="15"
+                    />
+
+                </HorizontalStackLayout>
+            </Grid>
+
+            <!-- RIGHT: VOLUME -->
+            <HorizontalStackLayout
+                Grid.Column="2"
+                Spacing="8"
+                VerticalOptions="Center"
+                HorizontalOptions="End">
+
+                <Image
+                    Source="audio.png"
+                    WidthRequest="16"
+                    HeightRequest="16" />
+
+                <Slider
+                    WidthRequest="100"
+                    Minimum="0"
+                    Maximum="1"
+                    Value="{Binding Volume, Mode=TwoWay}"
+                    MinimumTrackColor="White"
+                    MaximumTrackColor="#404040">
+                    
+                </Slider>
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout
+                Grid.Column="0"
+                HorizontalOptions="Start">
+                <Image Source="dotnet_bot.png"
+                       HeightRequest="80"
+                       WidthRequest="80"/>
+                <Label Text=" hello{Binding songName}"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       FontAttributes="Bold"
+                       FontSize="15"/>
+            </HorizontalStackLayout>
+
+        </Grid>
+
+
+
+
+
+
+    </Grid>
+
+</ContentPage>

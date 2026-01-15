@@ -1,0 +1,47 @@
+
+
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="GekkoMusic.Cards.LikedSongs"
+             Title="LikedSongs">
+    
+    <Shell.TitleView  >
+        <Grid
+         
+         HeightRequest="80"
+         ColumnDefinitions="Auto,Auto,*"
+         Padding="10"
+         BackgroundColor="Black">
+
+           
+
+            <!-- SEARCH BAR -->
+            <SearchBar
+             
+             Grid.Column="2"
+             Placeholder="Search"
+             BackgroundColor="#181818"
+             TextColor="White"
+             PlaceholderColor="Gray"
+             HeightRequest="40"
+             WidthRequest="350"
+             HorizontalOptions="Center"
+             VerticalOptions="Start"
+              />
+
+
+        </Grid>
+
+    </Shell.TitleView>
+
+
+    <VerticalStackLayout>
+
+        <Label 
+            Text="Welcome to .NET MAUI!"
+            VerticalOptions="Center" 
+            HorizontalOptions="Center" 
+            />
+    </VerticalStackLayout>
+</ContentPage>

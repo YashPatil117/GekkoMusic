@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="GekkoMusic.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:GekkoMusic"
+    
+    BackgroundColor="Black">
+   
+    
+
+    <ShellContent
+        Route="MainPage"
+        ContentTemplate="{DataTemplate local:MainPage}">
+
+        <!-- CUSTOM TOP BAR -->
+        <Shell.TitleView  >
+            <Grid
+                
+                HeightRequest="80"
+                ColumnDefinitions="Auto,Auto,*"
+                Padding="10"
+                BackgroundColor="Black">
+
+                <!-- LEFT BACK BUTTON -->
+                <ImageButton
+                    Margin="10"
+                    Grid.Column="0"
+                    Source="back_white_button.png"
+                    
+                    WidthRequest="70"
+                    HeightRequest="70"
+                    
+                    HorizontalOptions="End"
+                    VerticalOptions="End"
+                    BackgroundColor="Transparent"
+                    Command="{Binding GoBackCommand}"
+                    
+                     />
+
+                <!-- RIGHT BACK BUTTON (ROTATED) -->
+                <ImageButton
+                    Margin="10"
+                    Grid.Column="1"
+                    Source="back_white_button.png"
+                    WidthRequest="70"
+                    HeightRequest="70"
+                    
+                    Rotation="180"
+                    HorizontalOptions="End"
+                    VerticalOptions="End"
+                    BackgroundColor="Transparent"
+                    
+                    
+                    
+                     /> 
+
+                <!-- SEARCH BAR -->
+                <SearchBar
+                    
+                    Grid.Column="2"
+                    Placeholder="Search"
+                    BackgroundColor="#181818"
+                    TextColor="White"
+                    PlaceholderColor="Gray"
+                    HeightRequest="40"
+                    WidthRequest="350"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Start"
+                     /> 
+                
+
+            </Grid>
+
+        </Shell.TitleView>
+
+    </ShellContent>
+
+</Shell>
