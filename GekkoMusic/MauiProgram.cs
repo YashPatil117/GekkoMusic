@@ -3,6 +3,7 @@ using CommunityToolkit.Maui.Media;
 using GekkoMusic.Services;
 using Microsoft.Extensions.Logging;
 using Plugin.Maui.Audio;
+using GekkoMusic.ViewModels;
 namespace GekkoMusic
 {
     public static class MauiProgram
@@ -30,6 +31,11 @@ namespace GekkoMusic
 
             builder.Services.AddSingleton<YoutubeDlpService>();
 
+            builder.Services.AddSingleton<PlaylistStorageService>();
+
+            builder.Services.AddTransient<PlayerViewModel>();
+
+            builder.Services.AddTransient<MainPage>();
 
 
 #if DEBUG

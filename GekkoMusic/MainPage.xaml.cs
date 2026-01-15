@@ -17,23 +17,28 @@ public partial class MainPage : ContentPage
         Color.FromArgb("#181818");
 
 
-    public MainPage(IAudioManager audioManager)
+    //public MainPage(IAudioManager audioManager)
+    //{
+    //    InitializeComponent();
+
+    //    //var audioService = new AudioPlayerService(audioManager);
+    //    //_viewModel = new PlayerViewModel(audioService);
+
+    //    ///var audioService = new AudioPlayerService(audioManager);
+    //   // var ytService = new YoutubeDlpService();
+
+    //    // 2. Create ViewModel
+    //    //var viewModel = new PlayerViewModel(audioService, ytService);
+
+    //    // 3. Assign BindingContext
+    //    //BindingContext = viewModel;
+
+
+    //}
+    public MainPage(PlayerViewModel viewModel)
     {
         InitializeComponent();
-
-        //var audioService = new AudioPlayerService(audioManager);
-        //_viewModel = new PlayerViewModel(audioService);
-
-        var audioService = new AudioPlayerService(audioManager);
-        var ytService = new YoutubeDlpService();
-
-        // 2. Create ViewModel
-        var viewModel = new PlayerViewModel(audioService, ytService);
-
-        // 3. Assign BindingContext
         BindingContext = viewModel;
-
-        
     }
 
     protected override async void OnAppearing()

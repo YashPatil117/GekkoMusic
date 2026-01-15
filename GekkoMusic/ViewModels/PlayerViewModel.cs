@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace GekkoMusic.ViewModels
 {
@@ -19,10 +20,14 @@ namespace GekkoMusic.ViewModels
 
         private readonly PlaylistStorageService _storage;
 
-        private readonly PlaylistStorageService _playlistStorage;
 
         //Youtube property
         private readonly YoutubeDlpService _yt;
+
+        public ObservableCollection<Playlist> Playlists => _storage.Playlists;
+
+
+        public bool HasPlaylists => Playlists.Any();
 
         //public PlayerViewModel(AudioPlayerService audioService)
         //{
@@ -50,6 +55,7 @@ namespace GekkoMusic.ViewModels
 
             Volume = 0.7;
             _storage = storage;
+            Playlists.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasPlaylists));
         }
 
         public async Task InitializeAsync()
@@ -170,48 +176,97 @@ namespace GekkoMusic.ViewModels
                 return;
 
             playlist.CoverImagePath = path;
-            await _playlistStorage.SaveAsync();
+            await _storage.SaveAsync();
         }
 
 
         [RelayCommand]
         private async Task AddToPlaylist(YoutubeVideo video)
         {
-            var playlists = await _storage.LoadAsync();
+            var playlists = _storage.Playlists;
 
-            if (playlists.Count == 0)
-            {
-                await Shell.Current.DisplayAlert(
-                    "No Playlists",
-                    "Create a playlist first.",
-                    "OK");
-                return;
-            }
+            var playlistNames = playlists.Select(p => p.Name).ToArray();
 
             var selected = await Shell.Current.DisplayActionSheet(
                 "Add to Playlist",
                 "Cancel",
                 null,
-                playlists.Select(p => p.Name).ToArray()
+                playlistNames
             );
 
-            if (string.IsNullOrWhiteSpace(selected) || selected == "Cancel")
+            if (string.IsNullOrEmpty(selected) || selected == "Cancel")
                 return;
 
             var playlist = playlists.First(p => p.Name == selected);
 
-            if (playlist.Videos.Any(v => v.Id == video.Id))
+            if (!playlist.Videos.Any(v => v.Id == video.Id))
             {
-                await Shell.Current.DisplayAlert(
-                    "Already Added",
-                    "This song is already in the playlist.",
-                    "OK");
+                playlist.Videos.Add(video);
+                await _storage.SaveAsync();
+            }
+        }
+
+        [RelayCommand]
+        private async Task CreatePlaylist()
+        {
+            var name = await Shell.Current.DisplayPromptAsync(
+                "Create Playlist",
+                "Enter playlist name");
+
+            if (string.IsNullOrWhiteSpace(name))
                 return;
+
+            var playlist = new Playlist
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = name,
+                Videos = new List<YoutubeVideo>()
+            };
+
+            bool addCover = await Shell.Current.DisplayAlert(
+                "Playlist Cover",
+                "Do you want to add a cover image?",
+                "Yes",
+                "No");
+
+            if (addCover)
+            {
+                playlist.CoverImagePath =
+                    await PlaylistImageService.PickAndSaveImageAsync(playlist.Id);
             }
 
-            playlist.Videos.Add(video);
-            await _storage.SaveAsync(playlists);
+            Playlists.Insert(0, playlist);
+            await _storage.SaveAsync();
         }
+
+        [RelayCommand]
+        private async Task DeletePlaylistAsync(Playlist playlist)
+        {
+            if (playlist == null)
+                return;
+
+            bool confirm = await Shell.Current.DisplayAlert(
+                "Delete Playlist",
+                $"Are you sure you want to delete \"{playlist.Name}\"?",
+                "Delete",
+                "Cancel");
+
+            if (!confirm)
+                return;
+
+            Playlists.Remove(playlist);
+
+            await _storage.SaveAsync();
+        }
+
+
+
+        private void OpenPlaylist(Playlist playlist)
+        {
+            // Navigate to PlaylistDetailsPage
+        }
+        
+
 
 
 

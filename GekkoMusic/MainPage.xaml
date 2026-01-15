@@ -7,7 +7,11 @@
              xmlns:converters="clr-namespace:GekkoMusic.Converter"
 
              BackgroundColor="#000">
-
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:NullToBoolConverter x:Key="NullToBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <Grid RowDefinitions="9.3*,*"
           ColumnDefinitions="200,*"
           Padding="0"
@@ -330,103 +334,8 @@
                         </Grid>
                     </ScrollView>
 
-
-
-                    <!-- Horizontal Playlist Section -->
-                    <StackLayout Grid.Row="1" Margin="0,0,0,30">
-                        <Label Text="Your Playlists"
-                           FontSize="18"
-                           FontAttributes="Bold"
-                           TextColor="White"
-                           Margin="0,0,0,10"/>
-
-                        <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
-                            <StackLayout Orientation="Horizontal" Spacing="15">
-
-                                <!-- Add New Playlist Button -->
-                                    <Frame
-                                            CornerRadius="15"
-                                            WidthRequest="160"
-                                            HeightRequest="200"
-                                            Padding="0">
-
-                                        <Grid>
-
-                                            <!-- Background image -->
-                                            <Image
-                                                Source="{Binding CoverImagePath}"
-                                                Aspect="AspectFill"
-                                                Opacity="0.85" />
-
-                                            <!-- Fallback background -->
-                                            <BoxView
-                                                Color="#333333"
-                                                IsEnabled="{Binding SelectedItem}"
-                                             />
-
-                                            <!-- Overlay content -->
-                                            <Grid Padding="12">
-                                                <Label
-                                                    Text="{Binding Name}"
-                                                    TextColor="White"
-                                                    FontAttributes="Bold"
-                                                    VerticalOptions="End" />
-                                            </Grid>
-
-                                        </Grid>
-                                    </Frame>
-
-
-                                </StackLayout>
-                            
-                        </ScrollView>
-                        
-                    </StackLayout>
-                    <StackLayout Grid.Row="2" Margin="0,0,0,30">
-                        
-                        <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
-                            <StackLayout Orientation="Horizontal" Spacing="15">
-
-                                <!-- Add New Playlist Button -->
-                                <Frame CornerRadius="15" 
-                                       BackgroundColor="#333333"
-                                       Padding="20"
-                                       WidthRequest="160"
-                                       HeightRequest="200">
-                                    <StackLayout Spacing="15" VerticalOptions="Center">
-                                        <!-- Plus Icon -->
-                                        <Frame BackgroundColor="#444444"
-                                           CornerRadius="50"
-                                           HeightRequest="60"
-                                           WidthRequest="60"
-                                           HorizontalOptions="Center"
-                                           Padding="0">
-                                            <Label Text="+"
-                                               FontSize="30"
-                                               TextColor="White"
-                                               HorizontalOptions="Center"
-                                               VerticalOptions="Center"/>
-                                        </Frame>
-
-                                        <Label Text="Create Playlist"
-                                           FontSize="16"
-                                           FontAttributes="Bold"
-                                           TextColor="White"
-                                           HorizontalOptions="Center"/>
-                                    </StackLayout>
-
-                                                <!--       <Frame.GestureRecognizers>
-                                        <TapGestureRecognizer Tapped="OnCreatePlaylistTapped"/>
-                                    </Frame.GestureRecognizers>-->
-                                </Frame>
-
-                            </StackLayout>
-
-                        </ScrollView>
-
-                    </StackLayout>
-
-                    <Grid Grid.Row="3"
+                    <!--INTERNET SEARCH FOR MUSIC AND STUFF-->
+                    <Grid Grid.Row="1"
                           
                           ColumnDefinitions="4*,6*">
 
@@ -527,10 +436,159 @@
                     </Grid>
 
                     <!-- Main Content Area -->
+                        <Label Grid.Row="2" Text="YOUR PLAYLISTS"  FontAttributes="Bold" FontSize="20"></Label>
+
+                        <Frame
+                            Grid.Row="2"
+                            HeightRequest="200"
+                            WidthRequest="200"
+                            CornerRadius="15"
+                            BackgroundColor="#202020"
+                            IsVisible="{Binding HasPlaylists, Converter={StaticResource NullToBoolConverter}}"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center">
+
+                            <StackLayout
+                                VerticalOptions="Center"
+                                HorizontalOptions="Center"
+                                Spacing="12">
+
+                                <Image
+                                    Source="playlist_empty.png"
+                                    WidthRequest="40"
+                                    HeightRequest="40"
+                                    Opacity="0.6" />
+
+                                <Label
+                                    Text="Go on, add some playlists bud"
+                                    TextColor="#BBBBBB"
+                                    FontSize="14"
+                                    HorizontalTextAlignment="Center" />
+
+                            </StackLayout>
+                        </Frame>
+                        <CollectionView
+                                Grid.Row="2"
+                                Margin="30"
+                                ItemsSource="{Binding Playlists}"
+                                BackgroundColor="#181818"
+                                SelectionMode="None"
+                                HeightRequest="220"
+                            >
+
+                            
+                            <CollectionView.ItemsLayout>
+                                    <LinearItemsLayout
+                                        Orientation="Horizontal"
+                                        ItemSpacing="15" />
+                            </CollectionView.ItemsLayout>
+                            
+
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Frame
+                                        CornerRadius="15"
+                                        WidthRequest="160"
+                                        HeightRequest="200"
+                                        
+                                        Padding="0"
+                                        BackgroundColor="Transparent">
+
+                                        <!-- Open playlist -->
+                                        <Frame.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PlayerViewModel}},
+                                                                  Path=OpenPlaylistCommand}"
+                                                CommandParameter="{Binding .}" />
+
+                                            
+                                                <TapGestureRecognizer
+                                                    NumberOfTapsRequired="2"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PlayerViewModel}}, Path=DeletePlaylistCommand}"
+                                                    CommandParameter="{Binding .}" />
+                                            
+                                        </Frame.GestureRecognizers>
+                                        
+
+                                        <Grid>
+                                            <Grid.GestureRecognizers>
+                                                <PointerGestureRecognizer
+                                                     PointerEntered="OnPointerEnteredicon"
+                                                     PointerExited="OnPointerExitedicon"
+                                                     />
+                                            </Grid.GestureRecognizers>
+                                            <!-- Playlist cover -->
+                                            <Image
+                                                Source="{Binding CoverImagePath}"
+                                                Aspect="AspectFill"
+                                                Opacity="1" >
+
+                                                <Image.GestureRecognizers>
+                                                    <PointerGestureRecognizer
+                                                        PointerEntered ="OnPointerEnteredicon"
+                                                        PointerExited ="OnPointerExitedicon" />
+
+                                                </Image.GestureRecognizers>
+                                            </Image>
+                                               
+                                                
+                                             
+
+                                            <!-- Fallback background if no cover -->
+                                            <BoxView
+                                                Color="Transparent"
+                                                IsVisible="{Binding CoverImagePath,
+                                                                    Converter={StaticResource NullToBoolConverter},
+                                                                    ConverterParameter=invert}" >
+                                               
+                                                
+                                            </BoxView>
+
+                                            <!-- Playlist name -->
+                                            <Grid Padding="12">
+                                                
+                                                <Frame
+                                                    BackgroundColor="#000000"
+                                                    Opacity="0.75"
+                                                    Padding="6,2"
+                                                    CornerRadius="6"
+                                                    HorizontalOptions="Start"
+                                                    VerticalOptions="End"
+                                                    HasShadow="False">
+
+                                                    <Label
+                                                        Text="{Binding Name}"
+                                                        TextColor="White"
+                                                        FontAttributes="Bold"
+                                                        FontSize="14"
+                                                        LineBreakMode="TailTruncation" />
+                                                </Frame>
+                                            </Grid>
+
+
+                                        </Grid>
+                                    </Frame>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+
+                        </CollectionView>
+
+
+                    </Grid>
+
                     
-                </Grid>
+                
+                
+                
+                
             </Frame>
-            </ScrollView>
+                
+        </ScrollView>
+
+
+          
+          
+
 
             <!-- side panel (songpanel) -->
             <Grid Grid.Column="1"
@@ -814,6 +872,25 @@
                 VerticalOptions="Center"
                 HorizontalOptions="End">
 
+                <!--CREATE PLAYLIST BUTTON LIES HERE-->
+                    
+                <ImageButton
+                     BackgroundColor="#171717"
+                     CornerRadius="15"
+                     HeightRequest="0"
+                     WidthRequest="20"
+                     VerticalOptions="Center"
+                     
+                     Source="playlist_create.png"    
+                     Command="{Binding CreatePlaylistCommand}" >
+
+                    <ImageButton.GestureRecognizers>
+                        <PointerGestureRecognizer
+                         PointerEntered ="OnPointerEnteredicon"
+                         PointerExited ="OnPointerExitedicon" />
+
+                    </ImageButton.GestureRecognizers>
+                </ImageButton>
                 <Image
                     Source="audio.png"
                     WidthRequest="16"
