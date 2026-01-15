@@ -21,6 +21,7 @@ namespace GekkoMusic.ViewModels
 
         [JsonPropertyName("duration")]
         public int Duration { get; set; }
+        public string ThumbnailUrl =>$"https://img.youtube.com/vi/{Id}/mqdefault.jpg";
 
         public string Url => $"https://www.youtube.com/watch?v={Id}";
     }

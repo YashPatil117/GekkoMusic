@@ -60,7 +60,7 @@ namespace GekkoMusic.ViewModels
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(PlayPauseIcon))]
         private bool isPlaying;
-
+            
         [ObservableProperty] private bool isDragging;
         [ObservableProperty] private double volume;
         [ObservableProperty] private string songName = string.Empty;
@@ -137,11 +137,15 @@ namespace GekkoMusic.ViewModels
 
             SearchResults.Clear();
 
-            var results = await _yt.SearchAsync(query, 3);
+            await foreach (var video in _yt.SearchStreamAsync(query, 5))
+            {
+                SearchResults.Add(video);
 
-            foreach (var r in results)
-                SearchResults.Add(r);
+                if (SearchResults.Count == 5)
+                    break;
+            }
         }
+
 
 
     }
