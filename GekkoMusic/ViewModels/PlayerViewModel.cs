@@ -14,8 +14,12 @@ namespace GekkoMusic.ViewModels
     public partial class PlayerViewModel : ObservableObject
     {
         private readonly AudioPlayerService _audioService;
+
         private readonly IDispatcherTimer _timer;
 
+        private readonly PlaylistStorageService _storage;
+
+        private readonly PlaylistStorageService _playlistStorage;
 
         //Youtube property
         private readonly YoutubeDlpService _yt;
@@ -34,7 +38,8 @@ namespace GekkoMusic.ViewModels
 
         public PlayerViewModel(
         AudioPlayerService audioService,
-        YoutubeDlpService yt)
+        YoutubeDlpService yt,
+        PlaylistStorageService storage)
         {
             _audioService = audioService;
             _yt = yt;
@@ -44,6 +49,7 @@ namespace GekkoMusic.ViewModels
             _timer.Tick += (_, _) => UpdatePosition();
 
             Volume = 0.7;
+            _storage = storage;
         }
 
         public async Task InitializeAsync()
@@ -53,10 +59,16 @@ namespace GekkoMusic.ViewModels
             SongName = "Sample Song";
         }
 
-        [ObservableProperty] private double position;
-        [ObservableProperty] private double totalDuration;
+        [ObservableProperty] 
+        private double position;
+
+        [ObservableProperty] 
+        private double totalDuration;
+
         [ObservableProperty]
         private string searchText = string.Empty;
+
+
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(PlayPauseIcon))]
         private bool isPlaying;
@@ -144,6 +156,61 @@ namespace GekkoMusic.ViewModels
                 if (SearchResults.Count == 5)
                     break;
             }
+        }
+
+        
+        [RelayCommand]
+        private async Task ChangePlaylistCover(Playlist playlist)
+        {
+            if (playlist == null)
+                return;
+
+            var path = await PlaylistImageService.PickAndSaveImageAsync(playlist.Id);
+            if (path == null)
+                return;
+
+            playlist.CoverImagePath = path;
+            await _playlistStorage.SaveAsync();
+        }
+
+
+        [RelayCommand]
+        private async Task AddToPlaylist(YoutubeVideo video)
+        {
+            var playlists = await _storage.LoadAsync();
+
+            if (playlists.Count == 0)
+            {
+                await Shell.Current.DisplayAlert(
+                    "No Playlists",
+                    "Create a playlist first.",
+                    "OK");
+                return;
+            }
+
+            var selected = await Shell.Current.DisplayActionSheet(
+                "Add to Playlist",
+                "Cancel",
+                null,
+                playlists.Select(p => p.Name).ToArray()
+            );
+
+            if (string.IsNullOrWhiteSpace(selected) || selected == "Cancel")
+                return;
+
+            var playlist = playlists.First(p => p.Name == selected);
+
+            if (playlist.Videos.Any(v => v.Id == video.Id))
+            {
+                await Shell.Current.DisplayAlert(
+                    "Already Added",
+                    "This song is already in the playlist.",
+                    "OK");
+                return;
+            }
+
+            playlist.Videos.Add(video);
+            await _storage.SaveAsync(playlists);
         }
 
 

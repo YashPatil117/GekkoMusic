@@ -4,6 +4,7 @@
              x:Class="GekkoMusic.MainPage"
              xmlns:vm="clr-namespace:GekkoMusic.ViewModels"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:converters="clr-namespace:GekkoMusic.Converter"
 
              BackgroundColor="#000">
 
@@ -343,39 +344,40 @@
                             <StackLayout Orientation="Horizontal" Spacing="15">
 
                                 <!-- Add New Playlist Button -->
-                                <Frame CornerRadius="15" 
-                                       BackgroundColor="#333333"
-                                       Padding="20"
-                                       WidthRequest="160"
-                                       HeightRequest="200">
-                                            <StackLayout Spacing="15" VerticalOptions="Center">
-                                                <!-- Plus Icon -->
-                                                <Frame BackgroundColor="#444444"
-                                           CornerRadius="50"
-                                           HeightRequest="60"
-                                           WidthRequest="60"
-                                           HorizontalOptions="Center"
-                                           Padding="0">
-                                                    <Label Text="+"
-                                               FontSize="30"
-                                               TextColor="White"
-                                               HorizontalOptions="Center"
-                                               VerticalOptions="Center"/>
-                                                </Frame>
+                                    <Frame
+                                            CornerRadius="15"
+                                            WidthRequest="160"
+                                            HeightRequest="200"
+                                            Padding="0">
 
-                                                <Label Text="Create Playlist"
-                                           FontSize="16"
-                                           FontAttributes="Bold"
-                                           TextColor="White"
-                                           HorizontalOptions="Center"/>
-                                            </StackLayout>
+                                        <Grid>
 
-                                     <!--       <Frame.GestureRecognizers>
-                                                <TapGestureRecognizer Tapped="OnCreatePlaylistTapped"/>
-                                            </Frame.GestureRecognizers>-->
-                                </Frame>
+                                            <!-- Background image -->
+                                            <Image
+                                                Source="{Binding CoverImagePath}"
+                                                Aspect="AspectFill"
+                                                Opacity="0.85" />
 
-                            </StackLayout>
+                                            <!-- Fallback background -->
+                                            <BoxView
+                                                Color="#333333"
+                                                IsEnabled="{Binding SelectedItem}"
+                                             />
+
+                                            <!-- Overlay content -->
+                                            <Grid Padding="12">
+                                                <Label
+                                                    Text="{Binding Name}"
+                                                    TextColor="White"
+                                                    FontAttributes="Bold"
+                                                    VerticalOptions="End" />
+                                            </Grid>
+
+                                        </Grid>
+                                    </Frame>
+
+
+                                </StackLayout>
                             
                         </ScrollView>
                         
