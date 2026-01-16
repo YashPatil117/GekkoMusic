@@ -10,50 +10,27 @@
     
 
     <ShellContent
+        
         Route="MainPage"
         ContentTemplate="{DataTemplate local:MainPage}">
 
         <!-- CUSTOM TOP BAR -->
-        <Shell.TitleView  >
+        <Shell.TitleView >
+            
             <Grid
                 
-                HeightRequest="80"
+                HeightRequest="70"
                 ColumnDefinitions="Auto,Auto,*"
                 Padding="10"
                 BackgroundColor="Black">
 
                 <!-- LEFT BACK BUTTON -->
-                <ImageButton
-                    Margin="10"
+                <Image
+                    Source="logogekko.png"
                     Grid.Column="0"
-                    Source="back_white_button.png"
-                    
-                    WidthRequest="70"
-                    HeightRequest="70"
-                    
-                    HorizontalOptions="End"
-                    VerticalOptions="End"
-                    BackgroundColor="Transparent"
-                    Command="{Binding GoBackCommand}"
-                    
-                     />
-
-                <!-- RIGHT BACK BUTTON (ROTATED) -->
-                <ImageButton
-                    Margin="10"
-                    Grid.Column="1"
-                    Source="back_white_button.png"
-                    WidthRequest="70"
-                    HeightRequest="70"
-                    
-                    Rotation="180"
-                    HorizontalOptions="End"
-                    VerticalOptions="End"
-                    BackgroundColor="Transparent"
-                    
-                    
-                    
-                     /> 
+                    VerticalOptions="Start"
+                    HorizontalOptions="Center"
+                    ></Image> 
 
                 <!-- SEARCH BAR -->
                 <SearchBar

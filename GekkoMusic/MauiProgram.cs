@@ -4,6 +4,7 @@ using GekkoMusic.Services;
 using Microsoft.Extensions.Logging;
 using Plugin.Maui.Audio;
 using GekkoMusic.ViewModels;
+using GekkoMusic.Cards;
 namespace GekkoMusic
 {
     public static class MauiProgram
@@ -24,6 +25,7 @@ namespace GekkoMusic
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
+            builder.ConfigureMauiHandlers(handlers => { });
 
             builder.Services.AddSingleton(AudioManager.Current);
 
@@ -33,9 +35,25 @@ namespace GekkoMusic
 
             builder.Services.AddSingleton<PlaylistStorageService>();
 
-            builder.Services.AddTransient<PlayerViewModel>();
+            builder.Services.AddSingleton<PlayerViewModel>();
 
             builder.Services.AddTransient<MainPage>();
+
+            builder.Services.AddSingleton<LikedSongStorageService>();
+
+            builder.Services.AddSingleton<LikedSongsViewModel>();
+
+            builder.Services.AddTransient<Cards.LikedSongs>();
+
+            builder.Services.AddSingleton<DownloadStorageService>();
+
+            //builder.Services.AddSingleton<DownloadStorageService>();
+
+            builder.Services.AddSingleton<DownloadedViewModel>();
+
+            builder.Services.AddTransient<Cards.Downloaded>();
+            
+            
 
 
 #if DEBUG

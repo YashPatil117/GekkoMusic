@@ -42,22 +42,58 @@ namespace GekkoMusic.Services
         }
         // ======================
         // CONTROL METHODS
+        // CONTROL METHODS
         // ======================
-
+        //gpt generated
         public async Task LoadAsync(string source)
         {
             if (_player != null)
-                return;
+            {
+                _player.Stop();
+            }
 
-            Stream stream = source.StartsWith("http")
-                ? await _httpClient.GetStreamAsync(source)
-                : await FileSystem.OpenAppPackageFileAsync(source);
+
+            Stream stream;
+
+            if (source.StartsWith("http"))
+            {
+                // ❌ DO NOT HTTP DOWNLOAD
+                // source is now a local file path produced by yt-dlp
+                stream = File.OpenRead(source);
+            }
+            else
+            {
+                stream = File.OpenRead(source);
+            }
 
             _player = _audioManager.CreatePlayer(stream);
         }
 
-        public void Play() => _player?.Play();
+
+
+
+        public async Task Play(string filePath)
+        {
+            _player?.Stop();
+            _player?.Dispose();
+
+            var stream = File.OpenRead(filePath);
+            _player = AudioManager.Current.CreatePlayer(stream);
+           // _playerVM.Thumbnail = song.ThumbnailPath;
+            await Task.Delay(200);
+
+            _player.Play();
+        }
         public void Pause() => _player?.Pause();
+        public void Stop()
+        {
+            if (_player == null)
+                return;
+
+            _player.Stop();
+            _player.Dispose();
+            _player = null;
+        }
 
         public void Seek(double position)
         {

@@ -1,28 +1,27 @@
-﻿using GekkoMusic.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using GekkoMusic.ViewModels;
 
 namespace GekkoMusic.Services
 {
-    public class PlaylistStorageService
+    public class DownloadStorageService
     {
         private readonly string _filePath;
 
-        public ObservableCollection<Playlist> Playlists { get; private set; }
+        public ObservableCollection<DownloadSong> Downloads { get; }
             = new();
 
-        public PlaylistStorageService()
+        public DownloadStorageService()
         {
             _filePath = Path.Combine(
                 FileSystem.AppDataDirectory,
-                "playlists.json");
-            Debug.WriteLine(_filePath);
+                "downloads.json");
+
             Load();
         }
 
@@ -32,32 +31,31 @@ namespace GekkoMusic.Services
                 return;
 
             var json = File.ReadAllText(_filePath);
-            var data = JsonSerializer.Deserialize<ObservableCollection<Playlist>>(json);
+            var data =
+                JsonSerializer.Deserialize<List<DownloadSong>>(json);
 
             if (data != null)
-            {
-                Playlists.Clear();
+                foreach (var song in data)
+                    Downloads.Add(song);
+        }
 
-                foreach (var p in data)
-                    Playlists.Add(p);
-            }
-                
+        public async Task AddAsync(DownloadSong song)
+        {
+            if (Downloads.Any(s => s.FilePath == song.FilePath))
+                return;
 
+            Downloads.Add(song);
+            await SaveAsync();
         }
 
         public async Task SaveAsync()
         {
             var json = JsonSerializer.Serialize(
-                Playlists,
+                Downloads.ToList(),
                 new JsonSerializerOptions { WriteIndented = true });
 
             await File.WriteAllTextAsync(_filePath, json);
         }
-
-       
-
     }
-
-
 
 }

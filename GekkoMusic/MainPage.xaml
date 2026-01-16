@@ -5,6 +5,7 @@
              xmlns:vm="clr-namespace:GekkoMusic.ViewModels"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:converters="clr-namespace:GekkoMusic.Converter"
+             x:Name="RootPage"
 
              BackgroundColor="#000">
     <ContentPage.Resources>
@@ -132,7 +133,7 @@
                                            VerticalOptions="Center"
                                                >
                                             <Label.GestureRecognizers>
-                                                <TapGestureRecognizer Tapped="OnLabelTapped" />
+                                                <TapGestureRecognizer Tapped="OnLikeTapped" />
                                             </Label.GestureRecognizers>
                                             
                                         </Label>
@@ -174,16 +175,20 @@
                                             </LinearGradientBrush>
                                         </Border.Background>
                                         <Image Source="playlist.png" WidthRequest="30" HeightRequest="30"
-                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                                            HorizontalOptions="Center" VerticalOptions="Center"/>
                                     </Border>
 
                                     <Grid Grid.Column="1" Padding="12">
-                                        <Label Text="DEV PICKS"
+                                            <Label Text="DEV PICKS"
                                            FontAttributes="Bold"
                                            FontSize="14"
                                            TextColor="White"
-                                           VerticalOptions="Center"/>
-                                    </Grid>
+                                           VerticalOptions="Center">
+                                                <Label.GestureRecognizers>
+                                                    <TapGestureRecognizer Tapped="OnDevTapped" />
+                                                </Label.GestureRecognizers>
+                                            </Label>
+                                        </Grid>
                                 </Grid>
                             </Border>
 
@@ -226,12 +231,16 @@
                                     </Border>
 
                                     <Grid Grid.Column="1" Padding="12">
-                                        <Label Text="RECENTLY PLAYED"
+                                            <Label Text="RECENTLY PLAYED"
                                             FontAttributes="Bold"
                                             FontSize="14"
                                             TextColor="White"
-                                            VerticalOptions="Center"/>
-                                    </Grid>
+                                            VerticalOptions="Center">
+                                                <Label.GestureRecognizers>
+                                                    <TapGestureRecognizer Tapped="OnRecentlyTapped" />
+                                                </Label.GestureRecognizers>
+                                            </Label>
+                                        </Grid>
                                 </Grid>
                             </Border>
 
@@ -271,12 +280,17 @@
                                     </Border>
 
                                     <Grid Grid.Column="1" Padding="12">
-                                        <Label Text="Downloaded/ Offline"
+                                            <Label Text="Downloaded/ Offline"
                                         FontAttributes="Bold"
                                         FontSize="14"
                                         TextColor="White"
-                                        VerticalOptions="Center"/>
-                                    </Grid>
+                                        VerticalOptions="Center">
+                                                <Label.GestureRecognizers>
+                                                    <TapGestureRecognizer Tapped="OnDownloadTapped" />
+                                                </Label.GestureRecognizers>
+                                            </Label>
+
+                                        </Grid>
                                 </Grid>
                             </Border>
 
@@ -315,12 +329,16 @@
                                     </Border>
 
                                     <Grid Grid.Column="1" Padding="12">
-                                        <Label Text="GENRE"
+                                            <Label Text="GENRE"
                                             FontAttributes="Bold"
                                             FontSize="14"
                                             TextColor="White"
-                                            VerticalOptions="Center"/>
-                                    </Grid>
+                                            VerticalOptions="Center">
+                                                <Label.GestureRecognizers>
+                                                    <TapGestureRecognizer Tapped="OnGenreTapped" />
+                                                </Label.GestureRecognizers>
+                                            </Label>
+                                        </Grid>
                                 </Grid>
                             </Border>
 
@@ -335,22 +353,23 @@
                     </ScrollView>
 
                     <!--INTERNET SEARCH FOR MUSIC AND STUFF-->
+                    
                     <Grid Grid.Row="1"
                           
-                          ColumnDefinitions="4*,6*">
-
+                          ColumnDefinitions="3*,7*">
+                            
                         <Label
                             Grid.Row="0"
                             Grid.ColumnSpan="2"
                             Text="Search Music On The Internet"
-                            FontSize="18"
+                            FontSize="15"
                             FontAttributes="Bold"
                             TextColor="White"
                             Margin="0,0,0,10"/>
 
                         <Border Grid.Row="1" Grid.Column="0" StrokeThickness="0">
                             <SearchBar
-                            WidthRequest="270"
+                            WidthRequest="250"
                             HeightRequest="40"
                             Placeholder="Search"
                             Text="{Binding SearchText}"
@@ -408,21 +427,59 @@
                                                     Spacing="10"
                                                     VerticalOptions="Center">
 
+
+                                                <!-- like the song -->
+                                                <ImageButton
+                                                    Source="heart.png"
+                                                    WidthRequest="15"
+                                                    HeightRequest="15"
+                                                    BackgroundColor="Transparent"
+                                                            Command="{Binding BindingContext.LikeSongCommand, Source={x:Reference RootPage}}"
+                                                
+                                                    CommandParameter="{Binding .}" 
+                                                    
+                                                    >
+                                                    <ImageButton.GestureRecognizers>
+                                                        <PointerGestureRecognizer
+                                                         PointerEntered="OnPointerEnteredicon"
+                                                         PointerExited="OnPointerExitedicon"
+                                                         />
+                                                    </ImageButton.GestureRecognizers>
+                                                </ImageButton>
+
                                                 <ImageButton
                                                     Source="white_play.png"
                                                     WidthRequest="32"
                                                     HeightRequest="32"
                                                     BackgroundColor="Transparent"
-                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.PlayVideoCommand}"
-                                                    CommandParameter="{Binding .}" />
+                                                    Command="{Binding Source={x:Reference RootPage},
+                                                         Path=BindingContext.PlayYoutubeVideoCommand}"                                                  
+                                                    CommandParameter="{Binding .}"     
+                                                    >
+                                                    <ImageButton.GestureRecognizers>
+                                                        <PointerGestureRecognizer
+                                                             PointerEntered="OnPointerEnteredicon"
+                                                             PointerExited="OnPointerExitedicon"
+                                                             />
+                                                    </ImageButton.GestureRecognizers>
+                                                </ImageButton>
 
                                                 <ImageButton
                                                     Source="white_download.png"
                                                     WidthRequest="10"
                                                     HeightRequest="10"
                                                     BackgroundColor="Transparent"
-                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DownloadVideoCommand}"
-                                                    CommandParameter="{Binding .}" />
+                                                    Command="{Binding Source={x:Reference RootPage},
+                                                                      Path=BindingContext.DownloadSongCommand}"
+
+                                                    CommandParameter="{Binding .}"     >
+                                                    <ImageButton.GestureRecognizers>
+                                                        <PointerGestureRecognizer
+                                                             PointerEntered="OnPointerEnteredicon"
+                                                             PointerExited="OnPointerExitedicon"
+                                                             />
+                                                    </ImageButton.GestureRecognizers>
+                                                </ImageButton>
 
                                             </HorizontalStackLayout>
 
@@ -438,42 +495,15 @@
                     <!-- Main Content Area -->
                         <Label Grid.Row="2" Text="YOUR PLAYLISTS"  FontAttributes="Bold" FontSize="20"></Label>
 
-                        <Frame
-                            Grid.Row="2"
-                            HeightRequest="200"
-                            WidthRequest="200"
-                            CornerRadius="15"
-                            BackgroundColor="#202020"
-                            IsVisible="{Binding HasPlaylists, Converter={StaticResource NullToBoolConverter}}"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center">
 
-                            <StackLayout
-                                VerticalOptions="Center"
-                                HorizontalOptions="Center"
-                                Spacing="12">
-
-                                <Image
-                                    Source="playlist_empty.png"
-                                    WidthRequest="40"
-                                    HeightRequest="40"
-                                    Opacity="0.6" />
-
-                                <Label
-                                    Text="Go on, add some playlists bud"
-                                    TextColor="#BBBBBB"
-                                    FontSize="14"
-                                    HorizontalTextAlignment="Center" />
-
-                            </StackLayout>
-                        </Frame>
                         <CollectionView
                                 Grid.Row="2"
-                                Margin="30"
+                                Margin="40"
                                 ItemsSource="{Binding Playlists}"
                                 BackgroundColor="#181818"
                                 SelectionMode="None"
                                 HeightRequest="220"
+                            
                             >
 
                             
@@ -497,14 +527,13 @@
                                         <!-- Open playlist -->
                                         <Frame.GestureRecognizers>
                                             <TapGestureRecognizer
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PlayerViewModel}},
-                                                                  Path=OpenPlaylistCommand}"
+
                                                 CommandParameter="{Binding .}" />
 
                                             
                                                 <TapGestureRecognizer
                                                     NumberOfTapsRequired="2"
-                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PlayerViewModel}}, Path=DeletePlaylistCommand}"
+                                                        Command="{Binding BindingContext.DeletePlaylistCommand, Source={x:Reference RootPage}}"
                                                     CommandParameter="{Binding .}" />
                                             
                                         </Frame.GestureRecognizers>
@@ -595,14 +624,14 @@
                   BackgroundColor="#202020"
                   Padding="0">
 
-                <Border>
+                <Border StrokeThickness="0">
                     <!-- NO Background gradient here -->
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="6*"/>
                             <RowDefinition Height="4*"/>
                         </Grid.RowDefinitions>
-
+                        
                         <WebView Grid.RowSpan="2">
                             <WebView.Source>
                                 <HtmlWebViewSource>
@@ -668,8 +697,37 @@
                                 </HtmlWebViewSource>
                             </WebView.Source>
                         </WebView>
+                        <Border
+                            Grid.Row="0"
+                            StrokeThickness="0"
+                            WidthRequest="320"
+                            HeightRequest="390">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="10,10,10,10"/>
+                            </Border.StrokeShape>
+                            <Image
+                                Source="{Binding Thumbnail}"
+                                Aspect="AspectFill"
+                                HorizontalOptions="Fill"
+                                VerticalOptions="Fill" />
+                        </Border>
 
-                        <Border Grid.Row="1" Margin="20" BackgroundColor="#181818">
+                        <Border Grid.Row="1" Margin="20" BackgroundColor="#181818" StrokeThickness="0">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="10,10,10,10"/>
+                            </Border.StrokeShape>
+                            <Grid RowDefinitions="Auto,Auto,Auto">
+                                <Label Grid.Row="0"
+                                    Text="Now Playing"
+                                    FontSize="20"/>
+                                <Label Grid.Row="1" 
+                                    Text="{Binding SongName}"
+                                       FontSize="25"/>
+                                <Label Grid.Row="2" 
+                                    Text="{Binding Uploader, StringFormat='Uploaded by {0}'}"
+                                       FontSize="25"/>
+
+                            </Grid>
                             
                         </Border>
                         
@@ -698,7 +756,7 @@
     BackgroundColor="#000000"
     Padding="12"
     RowDefinitions="Auto,Auto"
-    ColumnDefinitions="2*,10*,2*">
+    ColumnDefinitions="3*,10*,2*">
 
             <!-- LEFT: Album + Track Info -->
             <HorizontalStackLayout
@@ -910,14 +968,22 @@
             <HorizontalStackLayout
                 Grid.Column="0"
                 HorizontalOptions="Start">
-                <Image Source="dotnet_bot.png"
+                <Image
+                    VerticalOptions="Center"
+                    Source="{Binding Thumbnail}"
                        HeightRequest="80"
                        WidthRequest="80"/>
-                <Label Text=" hello{Binding songName}"
-                       HorizontalOptions="Center"
-                       VerticalOptions="Center"
-                       FontAttributes="Bold"
-                       FontSize="15"/>
+                <VerticalStackLayout>
+                    <Label Text="Now Playing"/>
+                    <Label
+                        Text="{Binding SongName}"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        FontAttributes="Bold"
+                        FontSize="15" />
+                </VerticalStackLayout>
+                
+
             </HorizontalStackLayout>
 
         </Grid>

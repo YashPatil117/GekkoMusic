@@ -1,12 +1,286 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="GekkoMusic.Cards.Downloaded"
-             Title="Downloaded">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             xmlns:vm2="clr-namespace:GekkoMusic.Services"
+             xmlns:vm="clr-namespace:GekkoMusic.ViewModels"
+             x:Name="Downloadss"
+             Title="Downloads"
+             BackgroundColor="#171717">
+
+    <Shell.TitleView  >
+        <Grid
+         
+         HeightRequest="80"
+         ColumnDefinitions="Auto,Auto,*"
+         Padding="10"
+         BackgroundColor="Black">
+
+            <Image
+                Source="logogekko.png"
+                Grid.Column="0"
+                VerticalOptions="Start"
+                HorizontalOptions="Center"
+                ></Image>
+
+
+
+
+        </Grid>
+
+    </Shell.TitleView>
+
+    <ScrollView>
+
+
+        <VerticalStackLayout>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="300"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Header -->
+                <Border Grid.Row="0" StrokeThickness="0">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                            <GradientStop Color="LightPink" Offset="0.2" />
+                            <GradientStop Color="HotPink" Offset="1.0" />
+                        </LinearGradientBrush>
+                    </Border.Background>
+
+                    <Grid Padding="24">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="220"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Playlist Image -->
+                        <Border
+                                WidthRequest="200"
+                                HeightRequest="200"
+                                StrokeThickness="0"
+                                VerticalOptions="End"
+                            >
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="10,10,10,10"/>
+                            </Border.StrokeShape>
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="LightCoral" Offset="0"/>
+                                    <GradientStop Color="White" Offset="0.9"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+
+                            <Image
+                                Source="download.png"
+                                WidthRequest="80"
+                                HeightRequest="80"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"/>
+                        </Border>
+
+                        <!-- Playlist Info -->
+                        <VerticalStackLayout
+                            Grid.Column="1"
+                            Spacing="6"
+                            VerticalOptions="End">
+
+                            <Label
+                                Text="Playlist"
+                                FontSize="18"
+                                TextColor="White"
+                                Opacity="1"
+                                />
+
+                            <Label
+                                Text="Downloads"
+                                FontSize="48"
+                                FontAttributes="Bold"
+                                TextColor="White"/>
+
+                            <HorizontalStackLayout Spacing="6">
+
+
+                                <!--have to set to binding later -->
+                                <Label
+                                    
+                                    
+                                    Text="390 songs"
+                                    FontSize="13"
+                                    TextColor="White"
+                                    Opacity="0.95"/>
+                            </HorizontalStackLayout>
+
+                        </VerticalStackLayout>
+
+                    </Grid>
+                </Border>
+
+            <!--   <CollectionView ItemsSource="{Binding Songs}">
+    <CollectionView.ItemTemplate>
+        <DataTemplate x:DataType="vm:DownloadSong">
+            <Grid ColumnDefinitions="Auto,*,Auto" Padding="6">
+                <Image
+                    Source="{Binding ThumbnailPath}"
+                    WidthRequest="48"
+                    HeightRequest="48" />
+
+                <Label
+                    Grid.Column="1"
+                    Text="{Binding Title}"
+                    VerticalOptions="Center" />
+
+                <ImageButton
+                    Grid.Column="2"
+                    Source="white_play.png"
+                    Command="{Binding Source={RelativeSource AncestorType=ContentPage},
+                                      Path=BindingContext.PlayCommand}"
+                    CommandParameter="{Binding .}" />
+            </Grid>
+        </DataTemplate>
+    </CollectionView.ItemTemplate>
+</CollectionView>-->
+
+
+
+                <CollectionView
+    
+                    Grid.Row="1"
+                    ItemsSource="{Binding Songs}"
+                    Margin="16"
+                    ItemsLayout="VerticalList">
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="vm:DownloadSong">
+                            <Grid
+                                BackgroundColor="#121212"
+                                RowDefinitions="Auto,1"
+                                Padding="6,4"
+            
+            >
+                                <Grid.GestureRecognizers>
+                                    <PointerGestureRecognizer
+                                     PointerEntered="OnPointerEntered"
+                                     PointerExited="OnPointerExited"
+                                />
+                                </Grid.GestureRecognizers>
+                                <!-- Row content -->
+                                <Grid
+                ColumnDefinitions="48,1000,80,50,650"
+                ColumnSpacing="8"
+                VerticalOptions="Center"
+                Grid.Row="0">
+
+                                    <!-- Index -->
+                                    <!--   <Label
+                    Grid.Column="0"
+                    Text="1"
+                    FontSize="11"
+                    TextColor="#B3B3B3"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center" />-->
+
+                                    <!-- Thumbnail (small square) -->
+                                    <Border
+                                    Grid.Column="0"
+                                    WidthRequest="40"
+                                    HeightRequest="40"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 3">
+
+                                        <Image
+                                        Source="{Binding ThumbnailPath}"
+                                        Aspect="AspectFill" />
+                                                        </Border>
+
+                                    <!-- Title + artist -->
+                                    <VerticalStackLayout
+                                        Grid.Column="1"
+                                        Spacing="1"
+                                        VerticalOptions="Center">
+
+                                        <Label
+                                        Text="{Binding Title}"
+                                        FontSize="13"
+                                        TextColor="White"
+                                        LineBreakMode="TailTruncation" />
+
+                                    
+                                    </VerticalStackLayout>
+
+
+                                    <!--BINDING NOW WOKRING-->
+                                    <!-- Date -->
+                                    <!--<Label
+                    Grid.Column="2"
+                    Text="3 weeks ago"
+                    FontSize="11"
+                    TextColor="#B3B3B3"
+                    VerticalOptions="Center" />-->
+
+                                    <!-- Duration -->
+                                    <!--<Label
+                    Grid.Column="3"
+                    Text="4:11"
+                    FontSize="11"
+                    TextColor="#B3B3B3"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center" />-->
+
+                                    <!-- Actions (HORIZONTAL + SMALL) -->
+                                    <HorizontalStackLayout
+                                        Grid.Column="4"
+                                        Spacing="10"
+                                        VerticalOptions="Center"
+                                        HorizontalOptions="End">
+
+                                        <ImageButton
+                                            Source="white_play.png"
+                                            WidthRequest="14"
+                                            HeightRequest="14"
+                                            BackgroundColor="Transparent"
+                                            Padding="0"
+                                              Command="{Binding BindingContext.PlayCommand,
+                                                                                  Source={x:Reference Downloadss}}"
+
+                                            CommandParameter="{Binding .}" >
+                                            <ImageButton.GestureRecognizers>
+                                                <PointerGestureRecognizer
+                                                     PointerEntered="OnPointerEnteredicon"
+                                                     PointerExited="OnPointerExitedicon"
+                                                     />
+                                            </ImageButton.GestureRecognizers>
+                                        </ImageButton>
+
+                                        
+
+                                        
+                                    </HorizontalStackLayout>
+                                </Grid>
+
+                                <!-- Separator line -->
+                                <BoxView
+                                    Grid.Row="1"
+                                    HeightRequest="0.6"
+                                    BackgroundColor="#2A2A2A"
+                                    Margin="72,4,0,0" />
+                            </Grid>
+                        </DataTemplate>
+
+
+
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+
+
+
+
+            </Grid>
+            
+
+
+        </VerticalStackLayout>
+    </ScrollView>
+
 </ContentPage>

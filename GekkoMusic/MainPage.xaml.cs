@@ -35,19 +35,25 @@ public partial class MainPage : ContentPage
 
 
     //}
-    public MainPage(PlayerViewModel viewModel)
+    private readonly IServiceProvider _services;
+
+    public MainPage(
+        PlayerViewModel viewModel,
+        IServiceProvider services)
     {
         InitializeComponent();
         BindingContext = viewModel;
+        _services = services;
     }
 
-    protected override async void OnAppearing()
-    {
-        base.OnAppearing();
 
-        if (BindingContext is PlayerViewModel vm)
-            await vm.InitializeAsync();
-    }
+    //protected override async void OnAppearing()
+    //{
+    //    base.OnAppearing();
+
+    //    if (BindingContext is PlayerViewModel vm)
+    //        await vm.InitializeAsync();
+    //}
 
 
     // =========================
@@ -80,9 +86,29 @@ public partial class MainPage : ContentPage
             await view.ScaleTo(1.0, 100, Easing.CubicOut);
         }
     }
-    private async void OnLabelTapped(object sender, EventArgs e)
+    private async void OnLikeTapped(object sender, EventArgs e)
     {
         await Navigation.PushAsync(new Cards.LikedSongs());
+    }
+
+
+    private async void OnDevTapped(object sender, EventArgs e)
+    {
+        await Navigation.PushAsync(new Cards.DevPicks());
+    }
+    private async void OnRecentlyTapped(object sender, EventArgs e)
+    {
+        await Navigation.PushAsync(new Cards.RecentlyPlayed());
+    }
+    private async void OnDownloadTapped(object sender, EventArgs e)
+    {
+        var page = _services.GetRequiredService<Cards.Downloaded>();
+        await Navigation.PushAsync(page);
+    }
+
+    private async void OnGenreTapped(object sender, EventArgs e)
+    {
+        await Navigation.PushAsync(new Cards.Genre());
     }
 
 

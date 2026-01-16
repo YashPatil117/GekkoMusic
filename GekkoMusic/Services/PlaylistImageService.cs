@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,6 +27,7 @@ namespace GekkoMusic.Services
                 playlistId);
 
             Directory.CreateDirectory(destFolder);
+            Debug.WriteLine(destFolder);
 
             var destPath = Path.Combine(destFolder, "cover" + Path.GetExtension(result.FileName));
 
