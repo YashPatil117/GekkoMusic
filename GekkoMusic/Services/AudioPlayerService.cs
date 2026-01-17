@@ -10,9 +10,6 @@ using System.Timers;
 namespace GekkoMusic.Services
 {
     
-
-    
-
     public class AudioPlayerService
     {
         private IAudioPlayer? _player;
@@ -45,45 +42,63 @@ namespace GekkoMusic.Services
         // CONTROL METHODS
         // ======================
         //gpt generated
-        public async Task LoadAsync(string source)
-        {
-            if (_player != null)
-            {
-                _player.Stop();
-            }
+        //public async Task LoadAsync(string source)
+        //{
+        //    if (_player != null)
+        //    {
+        //        _player.Stop();
+        //    }
 
 
-            Stream stream;
+        //    Stream stream;
 
-            if (source.StartsWith("http"))
-            {
-                // ❌ DO NOT HTTP DOWNLOAD
-                // source is now a local file path produced by yt-dlp
-                stream = File.OpenRead(source);
-            }
-            else
-            {
-                stream = File.OpenRead(source);
-            }
+        //    if (source.StartsWith("http"))
+        //    {
+        //        // ❌ DO NOT HTTP DOWNLOAD
+        //        // source is now a local file path produced by yt-dlp
+        //        stream = File.OpenRead(source);
+        //    }
+        //    else
+        //    {
+        //        stream = File.OpenRead(source);
+        //    }
 
-            _player = _audioManager.CreatePlayer(stream);
-        }
+        //    _player = _audioManager.CreatePlayer(stream);
+        //}
 
 
 
 
         public async Task Play(string filePath)
         {
-            _player?.Stop();
-            _player?.Dispose();
+            if(_player != null)
+            {
+                Pause();
 
-            var stream = File.OpenRead(filePath);
+            }
+            
+                    _player?.Stop();
+                  _player?.Dispose();
+
+                var stream = File.OpenRead(filePath);
             _player = AudioManager.Current.CreatePlayer(stream);
            // _playerVM.Thumbnail = song.ThumbnailPath;
             await Task.Delay(200);
 
             _player.Play();
         }
+
+        public void Play()
+        {
+            if (_player == null)
+                return;
+
+            if (_player.IsPlaying)
+                _player.Pause();
+            else
+                _player.Play();
+        }
+
         public void Pause() => _player?.Pause();
         public void Stop()
         {
@@ -106,5 +121,4 @@ namespace GekkoMusic.Services
                 _player.Volume = volume;
         }
     }
-
 }

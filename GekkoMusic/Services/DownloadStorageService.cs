@@ -13,8 +13,7 @@ namespace GekkoMusic.Services
     {
         private readonly string _filePath;
 
-        public ObservableCollection<DownloadSong> Downloads { get; }
-            = new();
+        public ObservableCollection<DownloadSong> Downloads { get; } = new();
 
         public DownloadStorageService()
         {

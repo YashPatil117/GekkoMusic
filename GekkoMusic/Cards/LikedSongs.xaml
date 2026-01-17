@@ -138,6 +138,10 @@
                                          PointerEntered="OnPointerEntered"
                                          PointerExited="OnPointerExited"
                                          />
+                                    <TapGestureRecognizer
+                                      NumberOfTapsRequired="2"
+                                          Command="{Binding BindingContext.PlayCommand, Source={x:Reference LikedSongsPage}}"
+                                            CommandParameter="{Binding .}" />
                                 </Grid.GestureRecognizers>
                                 <!-- Row content -->
                                 <Grid
@@ -219,14 +223,14 @@
                                             HeightRequest="14"
                                             BackgroundColor="Transparent"
                                             Padding="0"
-                                             Command="{Binding BindingContext.PlayVideoCommand, Source={x:Reference LikedSongsPage}}"
-
+                                             Command="{Binding Source={x:Reference LikedSongsPage},
+                                                  Path=BindingContext.PlayCommand}" 
                                             CommandParameter="{Binding .}" >
                                             <ImageButton.GestureRecognizers>
                                                 <PointerGestureRecognizer
-                                             PointerEntered="OnPointerEnteredicon"
-                                             PointerExited="OnPointerExitedicon"
-                                             />
+                                                     PointerEntered="OnPointerEnteredicon"
+                                                     PointerExited="OnPointerExitedicon"
+                                                     />
                                             </ImageButton.GestureRecognizers>
                                         </ImageButton>
 

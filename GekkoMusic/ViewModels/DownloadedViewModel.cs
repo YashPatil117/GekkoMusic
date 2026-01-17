@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace GekkoMusic.ViewModels
 {
+
     public partial class DownloadedViewModel : ObservableObject
     {
         private readonly AudioPlayerService _audio;

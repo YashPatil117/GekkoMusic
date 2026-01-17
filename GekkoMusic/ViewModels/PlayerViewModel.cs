@@ -105,6 +105,8 @@ namespace GekkoMusic.ViewModels
 
         [ObservableProperty]
         private string thumbnail;
+        [ObservableProperty]
+        private string uploader;
         public string CurrentTime => FormatTime(Position);
         public string TotalTime => FormatTime(TotalDuration);
         public string PlayPauseIcon => IsPlaying ? "pause_player.png" : "play_player.png";
@@ -318,6 +320,7 @@ namespace GekkoMusic.ViewModels
             _audioService.Play(localFilePath); // PASS THE FILE
             TotalDuration = _audioService.Duration;
             Thumbnail = video.ThumbnailUrl;
+            Uploader = video.Uploader;
             _timer.Start();
             IsPlaying = true;
         }
@@ -337,7 +340,8 @@ namespace GekkoMusic.ViewModels
             {
                 Title = video.Title,
                 FilePath = localPath,
-                ThumbnailPath = video.ThumbnailUrl
+                ThumbnailPath = video.ThumbnailUrl,
+                Uploader = video.Uploader
             });
 
 
@@ -372,7 +376,7 @@ namespace GekkoMusic.ViewModels
 
         private void OpenPlaylist(Playlist playlist)
         {
-            // Navigate to PlaylistDetailsPage
+            // Navigate to PlaylistDetailsPage to be implemented soon ig?
         }
     }
 }

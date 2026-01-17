@@ -11,6 +11,8 @@ namespace GekkoMusic.ViewModels
         public string Title { get; set; }
         public string FilePath { get; set; }
         public string ThumbnailPath { get; set; } // optional
+
+        public string Uploader { get; set; }
     }
    
     public static class MusicDirectories
