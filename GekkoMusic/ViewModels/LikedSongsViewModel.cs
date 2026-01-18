@@ -9,7 +9,7 @@ namespace GekkoMusic.ViewModels
     {
         private readonly LikedSongStorageService _storage;
 
-        // ✅ UI-bound collection
+        //  UI-bound 
         [ObservableProperty]
         private ObservableCollection<YoutubeVideo> likedSongs = new();
 
@@ -19,7 +19,7 @@ namespace GekkoMusic.ViewModels
             LoadAsync();
         }
 
-        // ✅ Load once from storage
+       
         private async void LoadAsync()
         {
             var songs = await _storage.LoadAsync();
@@ -29,7 +29,7 @@ namespace GekkoMusic.ViewModels
                 LikedSongs.Add(song);
         }
 
-        // ✅ ONE command – UI + storage synced
+        
         [RelayCommand]
         private async Task Unlike(YoutubeVideo video)
         {

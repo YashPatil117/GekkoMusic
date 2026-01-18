@@ -1,19 +1,15 @@
 ﻿using GekkoMusic.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+
 namespace GekkoMusic.Services
 {
     public class YoutubeDlpService
     {
         private readonly string _ytDlpPath;
-       // public ObservableCollection<YoutubeVideo> Videos { get; } = new ObservableCollection<YoutubeVideo>();
 
         public YoutubeDlpService()
         {
@@ -55,57 +51,27 @@ namespace GekkoMusic.Services
             await process.WaitForExitAsync();
         }
 
-        public async Task<string> GetAudioStreamUrlAsync(string videoUrl)
-        {
-            var psi = new ProcessStartInfo
-            {
-                FileName = _ytDlpPath,
-
-                Arguments = $"-f bestaudio -g {videoUrl}",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
-
-            using var process = Process.Start(psi)!;
-            string output = await process.StandardOutput.ReadToEndAsync();
-            await process.WaitForExitAsync();
-
-            return output.Trim(); //THIS IS A DIRECT AUDIO STREAM URL
-        }
-
-
-
-        //gpt generated
         public async Task<string> DownloadAudioAsync(string youtubeUrl)
         {
-            var downloadsDir =
-                Path.Combine(FileSystem.AppDataDirectory, "Downloads");
-
+            var downloadsDir = MusicDirectories.Downloads;
             Directory.CreateDirectory(downloadsDir);
 
-            var outputPath =
-                Path.Combine(downloadsDir, $"{Guid.NewGuid()}.mp3");
+            var outputTemplate = Path.Combine(downloadsDir, $"{Guid.NewGuid()}.%(ext)s");
 
-            var ytDlpPath =
-                Path.Combine(AppContext.BaseDirectory, "Tools", "yt-dlp.exe");
-
-            if (!File.Exists(ytDlpPath))
-                throw new FileNotFoundException("yt-dlp.exe not found", ytDlpPath);
+            if (!File.Exists(_ytDlpPath))
+                throw new FileNotFoundException("yt-dlp.exe not found", _ytDlpPath);
 
             var args =
-                $"--js-runtimes node " +
-                $"-f bestaudio\r\n " +
+                $"-f bestaudio " +
                 $"--no-playlist " +
-                $"-o \"{outputPath}\" " +
+                $"-o \"{outputTemplate}\" " +
                 $"\"{youtubeUrl}\"";
 
             var process = new Process
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = ytDlpPath,
+                    FileName = _ytDlpPath,
                     Arguments = args,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
@@ -122,15 +88,84 @@ namespace GekkoMusic.Services
             if (process.ExitCode != 0)
                 throw new Exception($"yt-dlp failed: {stderr}");
 
-            if (!File.Exists(outputPath))
-                throw new FileNotFoundException("Download failed", outputPath);
+            // Find the downloaded file (could be .webm, .m4a, .opus, etc.)
+            var directory = Path.GetDirectoryName(outputTemplate);
+            var filePattern = Path.GetFileNameWithoutExtension(outputTemplate) + ".*";
+            var files = Directory.GetFiles(directory, filePattern);
+
+            if (files.Length == 0)
+                throw new FileNotFoundException("Download failed - no file created");
+
+            var outputPath = files[0];
+
+            // Wait for file to be fully written
+            var timeout = DateTime.UtcNow.AddSeconds(10);
+            while (new FileInfo(outputPath).Length == 0 && DateTime.UtcNow < timeout)
+            {
+                await Task.Delay(200);
+            }
+
+            if (new FileInfo(outputPath).Length == 0)
+                throw new FileNotFoundException("Download failed - file is empty", outputPath);
+
+            process.Dispose();
 
             return outputPath;
         }
 
+        public async Task<string> DownloadTempAsync(string url)
+        {
+            Directory.CreateDirectory(PathPlayer.TempMusic);
 
+            var outputTemplate = Path.Combine(
+                PathPlayer.TempMusic,
+                $"{Guid.NewGuid()}.%(ext)s"  // Changed from .mp3 to .%(ext)s
+            );
 
+            var psi = new ProcessStartInfo
+            {
+                FileName = _ytDlpPath,
+                Arguments =
+                    $"-f bestaudio " +  // Removed --extract-audio and --audio-format
+                    $"--no-playlist " +
+                    $"-o \"{outputTemplate}\" " +
+                    $"\"{url}\"",
 
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            using var process = Process.Start(psi)
+                ?? throw new Exception("Failed to start yt-dlp");
+
+            await process.WaitForExitAsync();
+
+            if (process.ExitCode != 0)
+                throw new Exception("yt-dlp exited with error");
+
+            // Find the downloaded file
+            var directory = Path.GetDirectoryName(outputTemplate);
+            var filePattern = Path.GetFileNameWithoutExtension(outputTemplate) + ".*";
+            var files = Directory.GetFiles(directory, filePattern);
+
+            if (files.Length == 0)
+                throw new Exception("yt-dlp did not create any file");
+
+            var outputPath = files[0];
+
+            // Wait for file to be ready
+            var timeout = DateTime.UtcNow.AddSeconds(10);
+            while (new FileInfo(outputPath).Length == 0 && DateTime.UtcNow < timeout)
+            {
+                await Task.Delay(200);
+            }
+
+            if (new FileInfo(outputPath).Length == 0)
+                throw new Exception("yt-dlp output file invalid");
+
+            return outputPath;
+        }
     }
 }
-

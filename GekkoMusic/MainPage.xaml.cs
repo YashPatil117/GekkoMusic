@@ -16,6 +16,12 @@ public partial class MainPage : ContentPage
     private static readonly Color NormalColor =
         Color.FromArgb("#181818");
 
+    private static readonly Color HoverColorSlider =
+        Colors.GreenYellow.WithAlpha(1f);
+
+    private static readonly Color HoverColorSliderNormal =
+        Colors.AliceBlue.WithAlpha(1f);
+
 
     //public MainPage(IAudioManager audioManager)
     //{
@@ -70,6 +76,20 @@ public partial class MainPage : ContentPage
     {
         if (sender is Border border)
             await AnimateBackgroundColor(border, HoverColor, NormalColor);
+    }
+    private  void ColourChangerPointer(object sender, PointerEventArgs e)
+    {
+        if(sender is Slider slider)
+        {
+             slider.MinimumTrackColor = HoverColorSlider;
+        }
+    }
+    private  void ColourChangerPointerexit(object sender, PointerEventArgs e)
+    {
+        if (sender is Slider slider)
+        {
+             slider.MinimumTrackColor = HoverColorSliderNormal;
+        }
     }
 
     private async void OnPointerEnteredicon(object sender, PointerEventArgs e)

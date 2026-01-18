@@ -1,20 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GekkoMusic.Services;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GekkoMusic.ViewModels
 {
-
     public partial class DownloadedViewModel : ObservableObject
     {
         private readonly AudioPlayerService _audio;
         private readonly PlayerViewModel _player;
+
         public ObservableCollection<DownloadSong> Songs { get; }
 
         public DownloadedViewModel(
@@ -32,12 +27,29 @@ namespace GekkoMusic.ViewModels
         {
             if (song == null || string.IsNullOrEmpty(song.FilePath))
                 return;
+
             _player.Thumbnail = song.ThumbnailPath;
+            _player.Uploader = song.Uploader;
             _player.PlayFile(song.FilePath, song.Title);
         }
-
-
-
     }
 
+    // ======================
+    // MODELS
+    // ======================
+
+   
+
+    // ======================
+    // DIRECTORY HELPERS
+    // ======================
+
+    public static class MusicDirectories
+    {
+        public static string Downloads =>
+            Path.Combine(FileSystem.AppDataDirectory, "Downloads");
+
+        public static string TempMusic =>
+            Path.Combine(FileSystem.AppDataDirectory, "TempMusic");
+    }
 }

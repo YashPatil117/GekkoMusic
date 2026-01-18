@@ -6,19 +6,13 @@ using System.Threading.Tasks;
 
 namespace GekkoMusic.ViewModels
 {
+
     public class DownloadSong
     {
-        public string Title { get; set; }
-        public string FilePath { get; set; }
-        public string ThumbnailPath { get; set; } // optional
-
-        public string Uploader { get; set; }
-    }
-   
-    public static class MusicDirectories
-    {
-        public static string Downloads =>
-            Path.Combine(FileSystem.AppDataDirectory, "Downloads");
+        public string Title { get; set; } = string.Empty;
+        public string FilePath { get; set; } = string.Empty;
+        public string ThumbnailPath { get; set; } = string.Empty;
+        public string Uploader { get; set; } = string.Empty;
     }
 
 }

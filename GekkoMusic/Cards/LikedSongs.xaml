@@ -223,14 +223,14 @@
                                             HeightRequest="14"
                                             BackgroundColor="Transparent"
                                             Padding="0"
-                                             Command="{Binding Source={x:Reference LikedSongsPage},
-                                                  Path=BindingContext.PlayCommand}" 
+                                             Command="{Binding BindingContext.PlayCommand, Source= {x:Reference LikedSongsPage}}" 
                                             CommandParameter="{Binding .}" >
                                             <ImageButton.GestureRecognizers>
                                                 <PointerGestureRecognizer
                                                      PointerEntered="OnPointerEnteredicon"
                                                      PointerExited="OnPointerExitedicon"
                                                      />
+                                                
                                             </ImageButton.GestureRecognizers>
                                         </ImageButton>
 

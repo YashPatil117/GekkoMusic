@@ -371,8 +371,9 @@
                             SearchCommandParameter="{Binding SearchText}" />
                         </Border>
 
-                        <CollectionView
-                            
+                            <!-- REPLACE YOUR SEARCH RESULTS COLLECTIONVIEW WITH THIS IMPROVED VERSION -->
+
+                            <CollectionView
                                 Grid.Column="1"
                                 ItemsSource="{Binding SearchResults}"
                                 HeightRequest="200"
@@ -381,10 +382,16 @@
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>
                                         <Grid Padding="8"
-                                                    ColumnDefinitions="Auto,*,Auto"
-                                                    ColumnSpacing="12"
-                                                    RowDefinitions="Auto,Auto">
+                                              ColumnDefinitions="Auto,*,Auto"
+                                              ColumnSpacing="12"
+                                              RowDefinitions="Auto,Auto">
 
+                                            <Grid.GestureRecognizers>
+                                                <TapGestureRecognizer
+                                                   NumberOfTapsRequired="2"
+                                                       Command="{Binding BindingContext.PlayOnlineCommand, Source={x:Reference RootPage}}"
+                                                       CommandParameter="{Binding .}" />
+                                            </Grid.GestureRecognizers>
                                             <!-- Thumbnail -->
                                             <Image
                                                     Grid.Column="0"
@@ -420,57 +427,51 @@
                                                     Spacing="10"
                                                     VerticalOptions="Center">
 
-
-                                                <!-- like the song -->
+                                                <!-- Like the song -->
                                                 <ImageButton
-                                                    Source="heart.png"
-                                                    WidthRequest="15"
-                                                    HeightRequest="15"
-                                                    BackgroundColor="Transparent"
-                                                            Command="{Binding BindingContext.LikeSongCommand, Source={x:Reference RootPage}}"
-                                                
-                                                    CommandParameter="{Binding .}" 
-                                                    
-                                                    >
+                                                        Source="heart.png"
+                                                        WidthRequest="20"
+                                                        HeightRequest="20"
+                                                        BackgroundColor="Transparent"
+                                                        Command="{Binding BindingContext.LikeSongCommand, Source={x:Reference RootPage}}"
+                                                        CommandParameter="{Binding .}"
+                                                        ToolTipProperties.Text="Like this song">
                                                     <ImageButton.GestureRecognizers>
                                                         <PointerGestureRecognizer
-                                                         PointerEntered="OnPointerEnteredicon"
-                                                         PointerExited="OnPointerExitedicon"
-                                                         />
+                                                        PointerEntered="OnPointerEnteredicon"
+                                                        PointerExited="OnPointerExitedicon" />
                                                     </ImageButton.GestureRecognizers>
                                                 </ImageButton>
 
+                                                <!-- Play Online (This is the main fix) -->
                                                 <ImageButton
-                                                    Source="white_play.png"
-                                                    WidthRequest="32"
-                                                    HeightRequest="32"
-                                                    BackgroundColor="Transparent"
-                                                    Command="{Binding Source={x:Reference RootPage},
-                                                         Path=BindingContext.PlayYoutubeVideoCommand}"                                                  
-                                                    CommandParameter="{Binding .}"     
-                                                    >
+                                                            Source="white_play.png"
+                                                            WidthRequest="32"
+                                                            HeightRequest="32"
+                                                            BackgroundColor="Transparent"
+                                                            Command="{Binding BindingContext.PlayOnlineCommand, Source={x:Reference RootPage}}"
+                                                            CommandParameter="{Binding .}"
+                                                            ToolTipProperties.Text="Play Online">
                                                     <ImageButton.GestureRecognizers>
                                                         <PointerGestureRecognizer
-                                                             PointerEntered="OnPointerEnteredicon"
-                                                             PointerExited="OnPointerExitedicon"
-                                                             />
+                                                            PointerEntered="OnPointerEnteredicon"
+                                                            PointerExited="OnPointerExitedicon" />
                                                     </ImageButton.GestureRecognizers>
                                                 </ImageButton>
 
+                                                <!-- Download -->
                                                 <ImageButton
-                                                    Source="white_download.png"
-                                                    WidthRequest="10"
-                                                    HeightRequest="10"
-                                                    BackgroundColor="Transparent"
-                                                    Command="{Binding Source={x:Reference RootPage},
-                                                                      Path=BindingContext.DownloadSongCommand}"
-
-                                                    CommandParameter="{Binding .}"     >
+                                                        Source="white_download.png"
+                                                        WidthRequest="20"
+                                                        HeightRequest="20"
+                                                        BackgroundColor="Transparent"
+                                                        Command="{Binding BindingContext.DownloadSongCommand, Source={x:Reference RootPage}}"
+                                                        CommandParameter="{Binding .}"
+                                                        ToolTipProperties.Text="Download for offline">
                                                     <ImageButton.GestureRecognizers>
                                                         <PointerGestureRecognizer
-                                                             PointerEntered="OnPointerEnteredicon"
-                                                             PointerExited="OnPointerExitedicon"
-                                                             />
+                                                            PointerEntered="OnPointerEnteredicon"
+                                                            PointerExited="OnPointerExitedicon" />
                                                     </ImageButton.GestureRecognizers>
                                                 </ImageButton>
 
@@ -480,10 +481,9 @@
                                     </DataTemplate>
                                 </CollectionView.ItemTemplate>
 
-
                             </CollectionView>
 
-                    </Grid>
+                        </Grid>
 
                     <!-- Main Content Area -->
                         <Label Grid.Row="2" Text="YOUR PLAYLISTS"  FontAttributes="Bold" FontSize="20"></Label>
@@ -914,7 +914,15 @@
                 DragCompletedCommand="{Binding SeekCompletedCommand}"
                 ThumbColor="White"
                 MinimumTrackColor="LightBlue"
-                MaximumTrackColor="#171717" />
+                MaximumTrackColor="#171717" >
+                        <Slider.GestureRecognizers>
+                            <PointerGestureRecognizer
+                                PointerEntered="ColourChangerPointer"
+                                PointerExited="ColourChangerPointerexit" />
+                        </Slider.GestureRecognizers>
+
+
+                    </Slider>
 
                     <Label
                 Text="{Binding TotalTime}"

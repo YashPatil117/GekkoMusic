@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using GekkoMusic.ViewModels;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using GekkoMusic.ViewModels;
 
 namespace GekkoMusic.Services
 {
@@ -29,13 +26,25 @@ namespace GekkoMusic.Services
             if (!File.Exists(_filePath))
                 return;
 
-            var json = File.ReadAllText(_filePath);
-            var data =
-                JsonSerializer.Deserialize<List<DownloadSong>>(json);
+            try
+            {
+                var json = File.ReadAllText(_filePath);
+                var data = JsonSerializer.Deserialize<List<DownloadSong>>(json);
 
-            if (data != null)
-                foreach (var song in data)
-                    Downloads.Add(song);
+                if (data != null)
+                {
+                    foreach (var song in data)
+                    {
+                        // Only add if file still exists
+                        if (File.Exists(song.FilePath))
+                            Downloads.Add(song);
+                    }
+                }
+            }
+            catch
+            {
+                // Ignore load errors
+            }
         }
 
         public async Task AddAsync(DownloadSong song)
@@ -47,14 +56,37 @@ namespace GekkoMusic.Services
             await SaveAsync();
         }
 
+        public async Task RemoveAsync(DownloadSong song)
+        {
+            Downloads.Remove(song);
+            await SaveAsync();
+
+            // Delete the file
+            try
+            {
+                if (File.Exists(song.FilePath))
+                    File.Delete(song.FilePath);
+            }
+            catch
+            {
+                // Ignore deletion errors
+            }
+        }
+
         public async Task SaveAsync()
         {
-            var json = JsonSerializer.Serialize(
-                Downloads.ToList(),
-                new JsonSerializerOptions { WriteIndented = true });
+            try
+            {
+                var json = JsonSerializer.Serialize(
+                    Downloads.ToList(),
+                    new JsonSerializerOptions { WriteIndented = true });
 
-            await File.WriteAllTextAsync(_filePath, json);
+                await File.WriteAllTextAsync(_filePath, json);
+            }
+            catch
+            {
+                // Ignore save errors
+            }
         }
     }
-
 }

@@ -1,12 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GekkoMusic.Services;
-using Plugin.Maui.Audio;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -15,73 +12,37 @@ namespace GekkoMusic.ViewModels
     public partial class PlayerViewModel : ObservableObject
     {
         private readonly AudioPlayerService _audioService;
-
         private readonly IDispatcherTimer _timer;
-
         private readonly PlaylistStorageService _storage;
-
-
-        //Youtube property
         private readonly YoutubeDlpService _yt;
-
-        public ObservableCollection<Playlist> Playlists => _storage.Playlists;
-
-        public ICommand AddToLikedCommand { get; }
-
-        public ICommand UnlikeCommand { get; }
-
-        public bool HasPlaylists => Playlists.Any();
-
         private readonly DownloadStorageService _downloadStorage;
-
-
-        //public PlayerViewModel(AudioPlayerService audioService)
-        //{
-        //    _audioService = audioService;
-
-        //    _timer = Application.Current!.Dispatcher.CreateTimer();
-        //    _timer.Interval = TimeSpan.FromMilliseconds(400);
-        //    _timer.Tick += (_, _) => UpdatePosition();
-
-        //    Volume = 0.7;
-        //}
         private readonly LikedSongStorageService _likedStorage;
 
+        public ObservableCollection<Playlist> Playlists => _storage.Playlists;
+        public ObservableCollection<YoutubeVideo> SearchResults { get; } = new();
+        public bool HasPlaylists => Playlists.Any();
 
         public PlayerViewModel(
-        AudioPlayerService audioService,
-        YoutubeDlpService yt,
-        PlaylistStorageService storage,
-        LikedSongStorageService likedStorage,
-        DownloadStorageService downloadStorage)
+            AudioPlayerService audioService,
+            YoutubeDlpService yt,
+            PlaylistStorageService storage,
+            LikedSongStorageService likedStorage,
+            DownloadStorageService downloadStorage)
         {
             _audioService = audioService;
-
             _yt = yt;
-
             _downloadStorage = downloadStorage;
+            _likedStorage = likedStorage;
+            _storage = storage;
 
             _timer = Dispatcher.GetForCurrentThread()!.CreateTimer();
-
             _timer.Interval = TimeSpan.FromMilliseconds(400);
-
             _timer.Tick += (_, _) => UpdatePosition();
-
-            _likedStorage = likedStorage;
 
             Volume = 0.7;
 
-            _storage = storage;
-
             Playlists.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasPlaylists));
         }
-
-        //public async Task InitializeAsync()
-        // await _audioService.LoadAsync("sample.mp3");
-        //    TotalDuration = _audioService.Duration;
-        //    SongdName = "Sample Song";{
-
-        //}
 
         [ObservableProperty]
         private double position;
@@ -99,14 +60,21 @@ namespace GekkoMusic.ViewModels
         [NotifyPropertyChangedFor(nameof(PlayPauseIcon))]
         private bool isPlaying;
 
-        [ObservableProperty] private bool isDragging;
-        [ObservableProperty] private double volume;
-        [ObservableProperty] private string songName = string.Empty;
+        [ObservableProperty]
+        private bool isDragging;
+
+        [ObservableProperty]
+        private double volume;
+
+        [ObservableProperty]
+        private string songName = string.Empty;
 
         [ObservableProperty]
         private string thumbnail;
+
         [ObservableProperty]
         private string uploader;
+
         public string CurrentTime => FormatTime(Position);
         public string TotalTime => FormatTime(TotalDuration);
         public string PlayPauseIcon => IsPlaying ? "pause_player.png" : "play_player.png";
@@ -124,14 +92,13 @@ namespace GekkoMusic.ViewModels
             }
             else
             {
-                _audioService.Play(CurrentFilePath);
+                _audioService.Resume();
                 IsPlaying = true;
             }
         }
 
-
-
-        [RelayCommand] private void SeekStarted() => IsDragging = true;
+        [RelayCommand]
+        private void SeekStarted() => IsDragging = true;
 
         [RelayCommand]
         private void SeekCompleted()
@@ -151,7 +118,6 @@ namespace GekkoMusic.ViewModels
             Position = _audioService.Position;
         }
 
-
         partial void OnPositionChanged(double value)
             => OnPropertyChanged(nameof(CurrentTime));
 
@@ -166,17 +132,6 @@ namespace GekkoMusic.ViewModels
             var ts = TimeSpan.FromSeconds(seconds);
             return $"{ts.Minutes}:{ts.Seconds:D2}";
         }
-
-
-        //YOUTUBES videos
-
-
-        public ObservableCollection<YoutubeVideo> SearchResults { get; } = new();
-
-        //public PlayerViewModel(YoutubeDlpService yt)
-        //{
-        //    _yt = yt;
-        //}
 
         [RelayCommand]
         private async Task Search(string query)
@@ -195,7 +150,6 @@ namespace GekkoMusic.ViewModels
             }
         }
 
-
         [RelayCommand]
         private async Task ChangePlaylistCover(Playlist playlist)
         {
@@ -210,12 +164,10 @@ namespace GekkoMusic.ViewModels
             await _storage.SaveAsync();
         }
 
-
         [RelayCommand]
         private async Task AddToPlaylist(YoutubeVideo video)
         {
             var playlists = _storage.Playlists;
-
             var playlistNames = playlists.Select(p => p.Name).ToArray();
 
             var selected = await Shell.Current.DisplayActionSheet(
@@ -286,9 +238,9 @@ namespace GekkoMusic.ViewModels
                 return;
 
             Playlists.Remove(playlist);
-
             await _storage.SaveAsync();
         }
+
         [RelayCommand]
         private async Task LikeSong(YoutubeVideo video)
         {
@@ -297,62 +249,84 @@ namespace GekkoMusic.ViewModels
 
             await _likedStorage.AddAsync(video);
             await MainThread.InvokeOnMainThreadAsync(() =>
-
-            Application.Current!.MainPage!.DisplayAlert(
+                Application.Current!.MainPage!.DisplayAlert(
                     "Liked",
                     "Added to liked songs",
                     "OK"));
         }
 
-
-        //got generated
         [RelayCommand]
-        private async Task PlayYoutubeVideo(YoutubeVideo video)
+        private async Task PlayOnline(YoutubeVideo video)
         {
             if (video == null)
                 return;
 
-            var localFilePath = await _yt.DownloadAudioAsync(video.Url);
+            // STOP FIRST to unlock files
+            _audioService.Stop();
+            IsPlaying = false;
+            _timer.Stop();
 
-            CurrentFilePath = localFilePath;
-            SongName = video.Title;
+            try
+            {
+                await Task.Delay(100); // Let cleanup finish
 
-            _audioService.Play(localFilePath); // PASS THE FILE
-            TotalDuration = _audioService.Duration;
-            Thumbnail = video.ThumbnailUrl;
-            Uploader = video.Uploader;
-            _timer.Start();
-            IsPlaying = true;
+                var tempFile = await _yt.DownloadTempAsync(video.Url);
+
+                CurrentFilePath = tempFile;
+                SongName = video.Title;
+                Thumbnail = video.ThumbnailUrl;
+                Uploader = video.Uploader;
+                Position = 0;
+                TotalDuration = 0;
+
+                _audioService.PlayTemp(tempFile);
+
+                IsPlaying = true;
+                _timer.Start();
+            }
+            catch (Exception ex)
+            {
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                    Application.Current!.MainPage!.DisplayAlert(
+                        "Error",
+                        $"Failed to play: {ex.Message}",
+                        "OK"));
+            }
         }
 
-
-
-        //gpt generated
         [RelayCommand]
         private async Task DownloadSong(YoutubeVideo video)
         {
             if (video == null)
                 return;
 
-            var localPath = await _yt.DownloadAudioAsync(video.Url);
-
-            await _downloadStorage.AddAsync(new DownloadSong
+            try
             {
-                Title = video.Title,
-                FilePath = localPath,
-                ThumbnailPath = video.ThumbnailUrl,
-                Uploader = video.Uploader
-            });
+                var localPath = await _yt.DownloadAudioAsync(video.Url);
 
+                await _downloadStorage.AddAsync(new DownloadSong
+                {
+                    Title = video.Title,
+                    FilePath = localPath,
+                    ThumbnailPath = video.ThumbnailUrl,
+                    Uploader = video.Uploader
+                });
 
-
-            await MainThread.InvokeOnMainThreadAsync(() =>
-                Application.Current!.MainPage!.DisplayAlert(
-                    "Downloaded",
-                    "Song saved for offline playback",
-                    "OK"));
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                    Application.Current!.MainPage!.DisplayAlert(
+                        "Downloaded",
+                        "Song saved for offline playback",
+                        "OK"));
+            }
+            catch (Exception ex)
+            {
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                    Application.Current!.MainPage!.DisplayAlert(
+                        "Error",
+                        $"Download failed: {ex.Message}",
+                        "OK"));
+            }
         }
-
 
         public void PlayFile(string filePath, string title)
         {
@@ -362,21 +336,13 @@ namespace GekkoMusic.ViewModels
             CurrentFilePath = filePath;
             SongName = title;
 
-            _audioService.Play(filePath);
+            _audioService.PlayDownloaded(filePath);
 
             TotalDuration = _audioService.Duration;
+            Position = 0;
 
             _timer.Start();
             IsPlaying = true;
-        }
-
-        
-
-
-
-        private void OpenPlaylist(Playlist playlist)
-        {
-            // Navigate to PlaylistDetailsPage to be implemented soon ig?
         }
     }
 }
